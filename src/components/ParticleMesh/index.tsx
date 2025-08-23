@@ -22,6 +22,9 @@ const ParticleMesh: React.FunctionComponent = () => {
     stats = new Stats()
     stats.showPanel(0)
     document.body.appendChild(stats.dom)
+    return () => {
+      document.body.removeChild(stats!.dom)
+    }
   }, [])
 
   useEffect(() => {
@@ -83,7 +86,7 @@ const ParticleMesh: React.FunctionComponent = () => {
     particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const particleMaterial: THREE.PointsMaterial = new THREE.PointsMaterial({
-      size: 0.18,
+      size: 0.1,
     });
     
     const particleSystem: THREE.Points = new THREE.Points(particles, particleMaterial);
