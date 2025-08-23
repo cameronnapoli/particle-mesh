@@ -2,12 +2,10 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { gravitationalForce, elasticForce } from './forces';
-import { Settings } from './settings';
+import { WithSettingsProps, withSettings } from './settings';
 import { useStats } from './useStats';
 
-const settings = new Settings()
-
-const ParticleMesh: React.FunctionComponent = () => {
+const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -200,4 +198,4 @@ const ParticleMesh: React.FunctionComponent = () => {
   );
 };
 
-export default ParticleMesh;
+export default withSettings(ParticleMesh);
