@@ -2,6 +2,9 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
+// TODO: update 3d to 2d vects
+// TODO: canvas width/height update
+
 const settings = {
   rows: 20,
   cols: 40,
@@ -17,7 +20,7 @@ const gridMidpoint = new THREE.Vector3(
 
 const gravitationalForce = (mouse: THREE.Vector3, particle: THREE.Vector3): THREE.Vector3 => {
   const mouseGravityStrength = 0.001;
-  const mouseGravityRadius = 2.0;
+  const mouseGravityRadius = 5.0;
 
   let distance = particle.distanceTo(mouse);
 
@@ -39,6 +42,19 @@ const gravitationalForce = (mouse: THREE.Vector3, particle: THREE.Vector3): THRE
     direction.y * magnitude,
     direction.z * magnitude,
   )
+}
+
+const elasticForce = (
+  anchor: THREE.Vector3,
+  particlePosition: THREE.Vector3,
+  particleVelocity: THREE.Vector3,
+  springConstant = 0.1,
+  dampingConstant = 0.1,
+): THREE.Vector3 => {
+  const displacement = particlePosition.clone().sub(anchor);
+  const springForce = displacement.multiplyScalar(-springConstant);
+  const dampingForce = particleVelocity.clone().multiplyScalar(-dampingConstant);
+  return springForce.add(dampingForce);
 }
 
 const ParticleMesh: React.FunctionComponent = () => {
@@ -159,21 +175,25 @@ const ParticleMesh: React.FunctionComponent = () => {
       for (let i = 0; i < particleCount; i++) {
         const arrayIndex = i * 3;
 
+        const anchorPosition = new THREE.Vector3(anchors[arrayIndex], anchors[arrayIndex + 1], anchors[arrayIndex + 2]);
+        const particlePosition = new THREE.Vector3(positionsArray[arrayIndex], positionsArray[arrayIndex + 1], positionsArray[arrayIndex + 2]);
+
         // mouse gravity
-        const gForce = gravitationalForce(
-          mouseIntersectPoint,
-          new THREE.Vector3(positionsArray[arrayIndex], positionsArray[arrayIndex + 1], positionsArray[arrayIndex + 2]),
-        )
+        const gForce = gravitationalForce(mouseIntersectPoint, particlePosition)
         velocities[arrayIndex] += gForce.x;
         velocities[arrayIndex + 1] += gForce.y;
-        // velocities[arrayIndex + 2] += gForce.z
+        velocities[arrayIndex + 2] += gForce.z;
 
         // anchor elasticity
-
-        // const entropy = 0.0005;
-        // velocities[arrayIndex] += (Math.random() - 0.5) * entropy
-        // velocities[arrayIndex + 1] += (Math.random() - 0.5) * entropy
-        // velocities[index + 2] += (Math.random() - 0.5) * 0.005
+        const particleVelocity = new THREE.Vector3(
+          velocities[arrayIndex],
+          velocities[arrayIndex + 1],
+          velocities[arrayIndex + 2],
+        )
+        const eForce = elasticForce(anchorPosition, particlePosition, particleVelocity)
+        velocities[arrayIndex] += eForce.x;
+        velocities[arrayIndex + 1] += eForce.y;
+        velocities[arrayIndex + 2] += eForce.z;
       }
 
       // update positions
@@ -181,7 +201,7 @@ const ParticleMesh: React.FunctionComponent = () => {
         const arrayIndex = i * 3;
         positionsArray[arrayIndex] += velocities[arrayIndex]
         positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1]
-        // positionsArray[index + 2] += velocities[index + 2]
+        positionsArray[arrayIndex + 2] += velocities[arrayIndex + 2]
       }
 
       mouseCube.position.copy(mouseIntersectPoint)
