@@ -21,6 +21,7 @@ const ParticleMesh: React.FunctionComponent = () => {
     // initialize Three.js scene
     const scene = new THREE.Scene();
     sceneRef.current = scene;
+    scene.background = new THREE.Color(0x1a1a1a)
 
     // create camera
     const camera = new THREE.PerspectiveCamera(
