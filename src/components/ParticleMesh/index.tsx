@@ -21,8 +21,8 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     scene.background = new THREE.Color(0xdddddd)
 
     // create camera
-    const normY = 10;
-    const ratio = window.innerWidth / window.innerHeight;
+    const normY = settings.normY;
+    const ratio = settings.width / settings.height;
     const normX = normY * ratio;
     const camera = new THREE.OrthographicCamera(
       -normX,
@@ -38,7 +38,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       antialias: true,
       powerPreference: 'high-performance',
     });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(settings.width, settings.height);
     // renderer.setClearColor(0x000000);
     rendererRef.current = renderer;
 
@@ -106,8 +106,8 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     scene.add(mouseCube)
 
     function onMouseMove(event: MouseEvent) {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      mouse.x = (event.clientX / settings.width) * 2 - 1;
+      mouse.y = -(event.clientY / settings.height) * 2 + 1;
     }
     window.addEventListener('mousemove', onMouseMove, false);
 
@@ -172,9 +172,9 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
 
     // handle window resize
     const handleResize = () => {
-      // camera.aspect = window.innerWidth / window.innerHeight;
+      // camera.aspect = settings.width / settings.height;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(settings.width, settings.height);
     };
     window.addEventListener('resize', handleResize);
 

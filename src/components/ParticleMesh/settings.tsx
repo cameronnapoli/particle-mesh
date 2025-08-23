@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 
-export class Settings {
+class Settings {
   // particles
   private _rows = 20
   private _cols = 40
   private _gap = 0.2
-  private _particleCount: number | null = null;
+  private _count: number | null = null
+
+  // canvas
+  width = window.innerWidth
+  height = window.innerHeight
+  normY = 10
 
   getRows() {
     return this._rows;
@@ -22,19 +27,19 @@ export class Settings {
 
   setRows(rows: number) {
     this._rows = rows;
-    this._particleCount = null;
+    this._count = null;
   }
   
   setCols(cols: number) {
     this._cols = cols;
-    this._particleCount = null;
+    this._count = null;
   }
 
   getParticleCount() {
-    if (this._particleCount === null) {
-      this._particleCount = this._rows * this._cols;
+    if (this._count === null) {
+      this._count = this._rows * this._cols;
     }
-    return this._particleCount;
+    return this._count;
   }
 
   getGridMidpoint() {
@@ -56,9 +61,9 @@ export function withSettings<P extends object>(
   return function WithSettingsComponent(props: P) {
     const [settings, setSettings] = useState<Settings>()
 
-    useState(() => {
+    useEffect(() => {
       setSettings(new Settings())
-    })
+    }, [])
 
     if (!settings) {
       return null;
