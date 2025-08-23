@@ -33,7 +33,7 @@ const ParticleMesh: React.FunctionComponent = () => {
     // initialize Three.js scene
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color(0x1a1a1a)
+    scene.background = new THREE.Color(0xdddddd)
 
     // create camera
     const camera = new THREE.PerspectiveCamera(
@@ -50,7 +50,7 @@ const ParticleMesh: React.FunctionComponent = () => {
       powerPreference: 'high-performance',
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000);
+    // renderer.setClearColor(0x000000);
     mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -58,7 +58,7 @@ const ParticleMesh: React.FunctionComponent = () => {
     const positions: Float32Array = new Float32Array(settings.getParticleCount() * 3);
     const anchors: Float32Array = new Float32Array(settings.getParticleCount() * 3);
     const velocities: Float32Array = new Float32Array(settings.getParticleCount() * 3);
-    const colors: Float32Array = new Float32Array(settings.getParticleCount() * 3);
+    // const colors: Float32Array = new Float32Array(settings.getParticleCount() * 3);
 
     for (let i = 0; i < settings.getParticleCount(); i++) {
       const column = Math.floor(i / settings.getRows());
@@ -76,17 +76,18 @@ const ParticleMesh: React.FunctionComponent = () => {
       anchors[arrayIndex + 1] = y;
       anchors[arrayIndex + 2] = 0;
 
-      const color = new THREE.Color().setHSL(0, 1.0, 1.0);
-      colors[arrayIndex] = color.r;
-      colors[arrayIndex + 1] = color.g;
-      colors[arrayIndex + 2] = color.b;
+      // const color = new THREE.Color(255, 0, 0)
+      // colors[arrayIndex] = color.r;
+      // colors[arrayIndex + 1] = color.g;
+      // colors[arrayIndex + 2] = color.b;
     }
     
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    // particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const particleMaterial: THREE.PointsMaterial = new THREE.PointsMaterial({
       size: 0.1,
+      color: new THREE.Color(0, 0, 0),
     });
     
     const particleSystem: THREE.Points = new THREE.Points(particles, particleMaterial);
@@ -99,16 +100,17 @@ const ParticleMesh: React.FunctionComponent = () => {
     const mouse: THREE.Vector2 = new THREE.Vector2(9999999, 9999999);
     const raycaster: THREE.Raycaster = new THREE.Raycaster();
 
-    const geometry = new THREE.BoxGeometry(0.25, 0.25, 0.25);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.3,
-      alphaTest: 0.1,
-      depthWrite: false,
-      blending: THREE.NormalBlending,
-    }); 
-    const mouseCube = new THREE.Mesh(geometry, material);
+    const mouseCube = new THREE.Mesh(
+      new THREE.BoxGeometry(0.25, 0.25, 0.25),
+      new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.3,
+        alphaTest: 0.1,
+        depthWrite: false,
+        blending: THREE.NormalBlending,
+      }),
+    );
     scene.add(mouseCube)
 
     function onMouseMove(event: MouseEvent) {
