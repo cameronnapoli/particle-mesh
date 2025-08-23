@@ -1,61 +1,13 @@
 'use client';
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { gravitationalForce, elasticForce } from './forces';
+import ParticleSettings from './settings';
 
 // TODO: update 3d to 2d vects
 // TODO: canvas width/height update
 
-const settings = {
-  rows: 20,
-  cols: 40,
-  gap: 0.2,
-}
-
-const particleCount = settings.rows * settings.cols;
-const gridMidpoint = new THREE.Vector3(
-  (settings.cols * settings.gap) / 2,
-  (settings.rows * settings.gap) / 2,
-  0,
-);
-
-const gravitationalForce = (mouse: THREE.Vector3, particle: THREE.Vector3): THREE.Vector3 => {
-  const mouseGravityStrength = 0.001;
-  const mouseGravityRadius = 5.0;
-
-  let distance = particle.distanceTo(mouse);
-
-  if (distance > mouseGravityRadius) {
-    return new THREE.Vector3(0, 0, 0);
-  }
-
-  // caps the magnitude
-  distance = Math.max(distance, 0.2);
-
-  const direction = new THREE.Vector3()
-    .subVectors(mouse, particle)
-    .normalize();
-  
-  const magnitude = mouseGravityStrength / (distance * distance);
-
-  return new THREE.Vector3(
-    direction.x * magnitude,
-    direction.y * magnitude,
-    direction.z * magnitude,
-  )
-}
-
-const elasticForce = (
-  anchor: THREE.Vector3,
-  particlePosition: THREE.Vector3,
-  particleVelocity: THREE.Vector3,
-  springConstant = 0.1,
-  dampingConstant = 0.1,
-): THREE.Vector3 => {
-  const displacement = particlePosition.clone().sub(anchor);
-  const springForce = displacement.multiplyScalar(-springConstant);
-  const dampingForce = particleVelocity.clone().multiplyScalar(-dampingConstant);
-  return springForce.add(dampingForce);
-}
+const settings = new ParticleSettings()
 
 const ParticleMesh: React.FunctionComponent = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -90,16 +42,16 @@ const ParticleMesh: React.FunctionComponent = () => {
     rendererRef.current = renderer;
 
     const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
-    const positions: Float32Array = new Float32Array(particleCount * 3);
-    const anchors: Float32Array = new Float32Array(particleCount * 3);
-    const velocities: Float32Array = new Float32Array(particleCount * 3);
-    const colors: Float32Array = new Float32Array(particleCount * 3);
+    const positions: Float32Array = new Float32Array(settings.getParticleCount() * 3);
+    const anchors: Float32Array = new Float32Array(settings.getParticleCount() * 3);
+    const velocities: Float32Array = new Float32Array(settings.getParticleCount() * 3);
+    const colors: Float32Array = new Float32Array(settings.getParticleCount() * 3);
 
-    for (let i = 0; i < particleCount; i++) {
-      const column = Math.floor(i / settings.rows);
-      const row = i % settings.rows;
-      const x = (column * settings.gap) - gridMidpoint.x;
-      const y = (row * settings.gap) - gridMidpoint.y;
+    for (let i = 0; i < settings.getParticleCount(); i++) {
+      const column = Math.floor(i / settings.getRows());
+      const row = i % settings.getRows();
+      const x = (column * settings.getGap()) - settings.getGridMidpoint().x;
+      const y = (row * settings.getGap()) - settings.getGridMidpoint().y;
 
       const arrayIndex = i * 3;
 
@@ -172,7 +124,7 @@ const ParticleMesh: React.FunctionComponent = () => {
       raycaster.ray.at(camera.position.z, mouseIntersectPoint);
       
       // apply forces
-      for (let i = 0; i < particleCount; i++) {
+      for (let i = 0; i < settings.getParticleCount(); i++) {
         const arrayIndex = i * 3;
 
         const anchorPosition = new THREE.Vector3(anchors[arrayIndex], anchors[arrayIndex + 1], anchors[arrayIndex + 2]);
@@ -197,7 +149,7 @@ const ParticleMesh: React.FunctionComponent = () => {
       }
 
       // update positions
-      for (let i = 0; i < particleCount; i++) {
+      for (let i = 0; i < settings.getParticleCount(); i++) {
         const arrayIndex = i * 3;
         positionsArray[arrayIndex] += velocities[arrayIndex]
         positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1]
