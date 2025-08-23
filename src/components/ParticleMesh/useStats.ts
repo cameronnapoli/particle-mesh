@@ -1,20 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import Stats from 'stats.js'
 
 export const useStats = () => {
-  const [stats] = useState<Stats | null>(null)
+  const stats = useRef<Stats>(null)
 
   useEffect(() => {
-    if (!stats) {
-      return;
-    }
-    stats.showPanel(0)
-    document.body.appendChild(stats.dom)
+    stats.current = new Stats()
+    stats.current.showPanel(0)
+    const element = stats.current.dom
+    document.body.appendChild(element)
     return () => {
-      document.body.removeChild(stats.dom)
+      document.body.removeChild(element)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [!!stats])
+  }, [])
 
   return stats;
 }

@@ -111,7 +111,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
 
     // animation loop
     const animate = () => {
-      stats?.begin();
+      stats.current?.begin();
 
       const positionsArray = particles.attributes.position.array as Float32Array;
 
@@ -160,7 +160,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       
       animationFrameRef.current = requestAnimationFrame(animate);
 
-      stats?.end()
+      stats.current?.end()
     };
     animate();
 

@@ -3,9 +3,9 @@ import * as THREE from 'three';
 
 class Settings {
   // particles
-  private _rows = 20
-  private _cols = 40
-  private _gap = 0.2
+  private _rows = 40
+  private _cols = 80
+  private _gap = 0.25
   private _count: number | null = null
 
   // canvas
@@ -48,7 +48,7 @@ class Settings {
     const row = index % this.getRows();
 
     const x = (column * this.getGap()) - this._getGridMidpoint().x;
-    const y = (row * this.getGap()) - this._getGridMidpoint().y;
+    const y = (row * this.getGap()) -  this._getGridMidpoint().y;
 
     return new THREE.Vector3(x, y, 0)
   }
