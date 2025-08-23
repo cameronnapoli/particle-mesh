@@ -40,8 +40,11 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     // renderer.setClearColor(0x000000);
-    mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
+
+    const mountContainer = mountRef.current
+    const canvasElement = renderer.domElement;
+    mountContainer.appendChild(canvasElement);
 
     const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
     const positions: Float32Array = new Float32Array(settings.getParticleCount() * 3);
@@ -116,8 +119,6 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     const animate = () => {
       stats?.begin();
 
-      animationFrameRef.current = requestAnimationFrame(animate);
-
       const positionsArray = particles.attributes.position.array as Float32Array;
 
       raycaster.setFromCamera(mouse, camera);
@@ -162,6 +163,8 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       particles.attributes.position.needsUpdate = true;
       
       renderer.render(scene, camera);
+      
+      animationFrameRef.current = requestAnimationFrame(animate);
 
       stats?.end()
     };
@@ -179,9 +182,8 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      if (rendererRef.current && mountRef.current) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        mountRef.current.removeChild(rendererRef.current.domElement);
+      mountContainer.removeChild(canvasElement);
+      if (rendererRef.current) {
         rendererRef.current.dispose();
       }
       window.removeEventListener('resize', handleResize);

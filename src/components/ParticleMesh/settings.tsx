@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as THREE from 'three';
 
 export class Settings {
@@ -53,7 +54,15 @@ export function withSettings<P extends object>(
   WrappedComponent: React.ComponentType<P & WithSettingsProps>,
 ) {
   return function WithSettingsComponent(props: P) {
-    const settings = new Settings();
+    const [settings, setSettings] = useState<Settings>()
+
+    useState(() => {
+      setSettings(new Settings())
+    })
+
+    if (!settings) {
+      return null;
+    }
     
     return <WrappedComponent {...props} settings={settings} />;
   };
