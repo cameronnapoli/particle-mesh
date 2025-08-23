@@ -2,30 +2,17 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { gravitationalForce, elasticForce } from './forces';
-import ParticleSettings from './settings';
-import Stats from 'stats.js'
+import { Settings } from './settings';
+import { useStats } from './useStats';
 
-let stats: Stats | null = null;
-
-// TODO: update 3d to 2d vects
-// TODO: canvas width/height update
-
-const settings = new ParticleSettings()
+const settings = new Settings()
 
 const ParticleMesh: React.FunctionComponent = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    stats = new Stats()
-    stats.showPanel(0)
-    document.body.appendChild(stats.dom)
-    return () => {
-      document.body.removeChild(stats!.dom)
-    }
-  }, [])
+  const stats = useStats()
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -36,13 +23,17 @@ const ParticleMesh: React.FunctionComponent = () => {
     scene.background = new THREE.Color(0xdddddd)
 
     // create camera
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
+    const normY = 10;
+    const ratio = window.innerWidth / window.innerHeight;
+    const normX = normY * ratio;
+    const camera = new THREE.OrthographicCamera(
+      -normX,
+      normX,
+      -normY,
+      normY,
+      1,
+      100,
     );
-    camera.position.z = 5;
 
     // create renderer
     const renderer = new THREE.WebGLRenderer({
@@ -120,7 +111,7 @@ const ParticleMesh: React.FunctionComponent = () => {
     window.addEventListener('mousemove', onMouseMove, false);
 
     // helper axes
-    const axesHelper = new THREE.AxesHelper(5);
+    const axesHelper = new THREE.AxesHelper(Math.min(normX, normY));
     scene.add(axesHelper);
 
     // animation loop
@@ -180,7 +171,7 @@ const ParticleMesh: React.FunctionComponent = () => {
 
     // handle window resize
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      // camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
@@ -198,10 +189,14 @@ const ParticleMesh: React.FunctionComponent = () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', onMouseMove, false);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div ref={mountRef} style={{ width: '100vw', height: '100vh', overflow: 'hidden' }} />
+    <div
+      ref={mountRef}
+      style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}
+    />
   );
 };
 

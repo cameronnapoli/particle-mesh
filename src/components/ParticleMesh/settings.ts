@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
-class ParticleSettings {
+export class Settings {
+  // particles
   private _rows = 20
   private _cols = 40
   private _gap = 0.2
@@ -43,5 +44,3 @@ class ParticleSettings {
     );
   }
 }
-
-export default ParticleSettings;
