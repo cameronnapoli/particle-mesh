@@ -3,6 +3,9 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { gravitationalForce, elasticForce } from './forces';
 import ParticleSettings from './settings';
+import Stats from 'stats.js'
+
+let stats: Stats | null = null;
 
 // TODO: update 3d to 2d vects
 // TODO: canvas width/height update
@@ -14,6 +17,12 @@ const ParticleMesh: React.FunctionComponent = () => {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    stats = new Stats()
+    stats.showPanel(0)
+    document.body.appendChild(stats.dom)
+  }, [])
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -74,12 +83,7 @@ const ParticleMesh: React.FunctionComponent = () => {
     particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const particleMaterial: THREE.PointsMaterial = new THREE.PointsMaterial({
-      size: 0.08,
-      blending: THREE.AdditiveBlending,
-      transparent: true,
-      sizeAttenuation: true,
-      vertexColors: true,
-      alphaTest: 0.1
+      size: 0.18,
     });
     
     const particleSystem: THREE.Points = new THREE.Points(particles, particleMaterial);
@@ -116,6 +120,8 @@ const ParticleMesh: React.FunctionComponent = () => {
 
     // animation loop
     const animate = () => {
+      stats?.begin();
+
       animationFrameRef.current = requestAnimationFrame(animate);
 
       const positionsArray = particles.attributes.position.array as Float32Array;
@@ -162,6 +168,8 @@ const ParticleMesh: React.FunctionComponent = () => {
       particles.attributes.position.needsUpdate = true;
       
       renderer.render(scene, camera);
+
+      stats?.end()
     };
     animate();
 
