@@ -51,7 +51,7 @@ const ParticleMesh: React.FunctionComponent = () => {
 
       positions[index] = (Math.random() - 0.5) * 3;
       positions[index + 1] = (Math.random() - 0.5) * 3;
-      positions[index + 2] = (Math.random() - 0.5) * 3;
+      positions[index + 2] = 0;
 
       const hue = 0;
       const color = new THREE.Color().setHSL(hue / 360, 0.8, 0.6);
@@ -75,27 +75,59 @@ const ParticleMesh: React.FunctionComponent = () => {
     const particleSystem: THREE.Points = new THREE.Points(particles, particleMaterial);
     scene.add(particleSystem);
 
+    camera.position.set(0, 0, 8);
+    camera.lookAt(0, 0, 0);
+
+    const mouse: THREE.Vector2 = new THREE.Vector2();
+    const raycaster: THREE.Raycaster = new THREE.Raycaster();
+
+    const geometry = new THREE.BoxGeometry(0.25, 0.25, 0.25);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.3,
+      alphaTest: 0.1,
+      depthWrite: false,
+      blending: THREE.NormalBlending,
+    }); 
+    const mouseCube = new THREE.Mesh(geometry, material);
+    scene.add(mouseCube)
+
+    function onMouseMove(event: MouseEvent) {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    }
+    window.addEventListener('mousemove', onMouseMove, false);
+
+    // helper axes
+    const axesHelper = new THREE.AxesHelper(5);
+    scene.add(axesHelper);
+
     // animation loop
     const animate = () => {
       animationFrameRef.current = requestAnimationFrame(animate);
 
       const positionsArray = particles.attributes.position.array as Float32Array;
+
+      raycaster.setFromCamera(mouse, camera);
+      const mouseIntersectPoint: THREE.Vector3 = new THREE.Vector3();
+      raycaster.ray.at(camera.position.z, mouseIntersectPoint);
       
       for (let i = 0; i < particleCount; i++) {
         const index = i * 3;
-
         velocities[index] += (Math.random() - 0.5) * 0.005
         velocities[index + 1] += (Math.random() - 0.5) * 0.005
-        velocities[index + 2] += (Math.random() - 0.5) * 0.005
+        // velocities[index + 2] += (Math.random() - 0.5) * 0.005
       }
 
       for (let i = 0; i < particleCount; i++) {
         const index = i * 3;
-
         positionsArray[index] += velocities[index]
         positionsArray[index + 1] += velocities[index + 1]
         positionsArray[index + 2] += velocities[index + 2]
       }
+
+      mouseCube.position.copy(mouseIntersectPoint)
 
       particles.attributes.position.needsUpdate = true;
       
@@ -121,6 +153,7 @@ const ParticleMesh: React.FunctionComponent = () => {
         rendererRef.current.dispose();
       }
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', onMouseMove, false);
     };
   }, []);
 
