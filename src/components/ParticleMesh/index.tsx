@@ -2,7 +2,18 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const particleCount = 100;
+const settings = {
+  rows: 20,
+  cols: 40,
+  gap: 0.2,
+}
+
+const particleCount = settings.rows * settings.cols;
+const gridMidpoint = new THREE.Vector3(
+  (settings.cols * settings.gap) / 2,
+  (settings.rows * settings.gap) / 2,
+  0,
+);
 
 const ParticleMesh: React.FunctionComponent = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -36,28 +47,27 @@ const ParticleMesh: React.FunctionComponent = () => {
     mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // add some basic geometry (e.g. a cube)
-    // const geometry = new THREE.BoxGeometry();
-    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // const cube = new THREE.Mesh(geometry, material);
-    // scene.add(cube);
     const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
     const positions: Float32Array = new Float32Array(particleCount * 3);
     const velocities: Float32Array = new Float32Array(particleCount * 3);
     const colors: Float32Array = new Float32Array(particleCount * 3);
 
     for (let i = 0; i < particleCount; i++) {
-      const index = i * 3;
+      const column = Math.floor(i / settings.rows);
+      const row = i % settings.rows;
+      const x = (column * settings.gap) - gridMidpoint.x;
+      const y = (row * settings.gap) - gridMidpoint.y;
 
-      positions[index] = (Math.random() - 0.5) * 3;
-      positions[index + 1] = (Math.random() - 0.5) * 3;
-      positions[index + 2] = 0;
+      const arrayIndex = i * 3;
 
-      const hue = 0;
-      const color = new THREE.Color().setHSL(hue / 360, 0.8, 0.6);
-      colors[index] = color.r;
-      colors[index + 1] = color.g;
-      colors[index + 2] = color.b;
+      positions[arrayIndex] = x;
+      positions[arrayIndex + 1] = y;
+      positions[arrayIndex + 2] = 0;
+
+      const color = new THREE.Color().setHSL(0, 1.0, 1.0);
+      colors[arrayIndex] = color.r;
+      colors[arrayIndex + 1] = color.g;
+      colors[arrayIndex + 2] = color.b;
     }
     
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -114,17 +124,18 @@ const ParticleMesh: React.FunctionComponent = () => {
       raycaster.ray.at(camera.position.z, mouseIntersectPoint);
       
       for (let i = 0; i < particleCount; i++) {
-        const index = i * 3;
-        velocities[index] += (Math.random() - 0.5) * 0.005
-        velocities[index + 1] += (Math.random() - 0.5) * 0.005
+        const entropy = 0.0005;
+        const arrayIndex = i * 3;
+        velocities[arrayIndex] += (Math.random() - 0.5) * entropy
+        velocities[arrayIndex + 1] += (Math.random() - 0.5) * entropy
         // velocities[index + 2] += (Math.random() - 0.5) * 0.005
       }
 
       for (let i = 0; i < particleCount; i++) {
-        const index = i * 3;
-        positionsArray[index] += velocities[index]
-        positionsArray[index + 1] += velocities[index + 1]
-        positionsArray[index + 2] += velocities[index + 2]
+        const arrayIndex = i * 3;
+        positionsArray[arrayIndex] += velocities[arrayIndex]
+        positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1]
+        // positionsArray[index + 2] += velocities[index + 2]
       }
 
       mouseCube.position.copy(mouseIntersectPoint)
