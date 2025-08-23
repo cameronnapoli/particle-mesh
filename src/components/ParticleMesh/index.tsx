@@ -2,6 +2,8 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
+const particleCount = 100;
+
 const ParticleMesh: React.FunctionComponent = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -35,17 +37,67 @@ const ParticleMesh: React.FunctionComponent = () => {
     rendererRef.current = renderer;
 
     // add some basic geometry (e.g. a cube)
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // const geometry = new THREE.BoxGeometry();
+    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    // const cube = new THREE.Mesh(geometry, material);
+    // scene.add(cube);
+    const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
+    const positions: Float32Array = new Float32Array(particleCount * 3);
+    const velocities: Float32Array = new Float32Array(particleCount * 3);
+    const colors: Float32Array = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i++) {
+      const index = i * 3;
+
+      positions[index] = (Math.random() - 0.5) * 3;
+      positions[index + 1] = (Math.random() - 0.5) * 3;
+      positions[index + 2] = (Math.random() - 0.5) * 3;
+
+      const hue = 0;
+      const color = new THREE.Color().setHSL(hue / 360, 0.8, 0.6);
+      colors[index] = color.r;
+      colors[index + 1] = color.g;
+      colors[index + 2] = color.b;
+    }
+    
+    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const particleMaterial: THREE.PointsMaterial = new THREE.PointsMaterial({
+      size: 0.08,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      sizeAttenuation: true,
+      vertexColors: true,
+      alphaTest: 0.1
+    });
+    
+    const particleSystem: THREE.Points = new THREE.Points(particles, particleMaterial);
+    scene.add(particleSystem);
 
     // animation loop
     const animate = () => {
       animationFrameRef.current = requestAnimationFrame(animate);
+
+      const positionsArray = particles.attributes.position.array as Float32Array;
       
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+      for (let i = 0; i < particleCount; i++) {
+        const index = i * 3;
+
+        velocities[index] += (Math.random() - 0.5) * 0.005
+        velocities[index + 1] += (Math.random() - 0.5) * 0.005
+        velocities[index + 2] += (Math.random() - 0.5) * 0.005
+      }
+
+      for (let i = 0; i < particleCount; i++) {
+        const index = i * 3;
+
+        positionsArray[index] += velocities[index]
+        positionsArray[index + 1] += velocities[index + 1]
+        positionsArray[index + 2] += velocities[index + 2]
+      }
+
+      particles.attributes.position.needsUpdate = true;
       
       renderer.render(scene, camera);
     };
