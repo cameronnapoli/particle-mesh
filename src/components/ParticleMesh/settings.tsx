@@ -11,7 +11,8 @@ class Settings {
   // canvas
   width = window.innerWidth
   height = window.innerHeight
-  normY = 10
+  cameraNormalY = 20 / 2 // proportional units to screen height
+  cameraNormalX = this.cameraNormalY * (this.width / this.height)
 
   getRows() {
     return this._rows;
@@ -35,14 +36,24 @@ class Settings {
     this._count = null;
   }
 
-  getParticleCount() {
+  getCount() {
     if (this._count === null) {
       this._count = this._rows * this._cols;
     }
     return this._count;
   }
 
-  getGridMidpoint() {
+  getParticleGridPosition(index: number) {
+    const column = Math.floor(index / this.getRows());
+    const row = index % this.getRows();
+
+    const x = (column * this.getGap()) - this._getGridMidpoint().x;
+    const y = (row * this.getGap()) - this._getGridMidpoint().y;
+
+    return new THREE.Vector3(x, y, 0)
+  }
+
+  private _getGridMidpoint() {
     return new THREE.Vector3(
       (this._cols * this._gap) / 2,
       (this._rows * this._gap) / 2,

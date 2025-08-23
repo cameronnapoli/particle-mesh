@@ -21,14 +21,11 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     scene.background = new THREE.Color(0xdddddd)
 
     // create camera
-    const normY = settings.normY;
-    const ratio = settings.width / settings.height;
-    const normX = normY * ratio;
     const camera = new THREE.OrthographicCamera(
-      -normX,
-      normX,
-      -normY,
-      normY,
+      -settings.cameraNormalX,
+      settings.cameraNormalX,
+      -settings.cameraNormalY,
+      settings.cameraNormalY,
       1,
       100,
     );
@@ -47,39 +44,35 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     mountContainer.appendChild(canvasElement);
 
     const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
-    const positions: Float32Array = new Float32Array(settings.getParticleCount() * 3);
-    const anchors: Float32Array = new Float32Array(settings.getParticleCount() * 3);
-    const velocities: Float32Array = new Float32Array(settings.getParticleCount() * 3);
-    // const colors: Float32Array = new Float32Array(settings.getParticleCount() * 3);
+    const positions: Float32Array = new Float32Array(settings.getCount() * 3);
+    const anchors: Float32Array = new Float32Array(settings.getCount() * 3);
+    const velocities: Float32Array = new Float32Array(settings.getCount() * 3);
+    const colors: Float32Array = new Float32Array(settings.getCount() * 3);
 
-    for (let i = 0; i < settings.getParticleCount(); i++) {
-      const column = Math.floor(i / settings.getRows());
-      const row = i % settings.getRows();
-      const x = (column * settings.getGap()) - settings.getGridMidpoint().x;
-      const y = (row * settings.getGap()) - settings.getGridMidpoint().y;
-
+    for (let i = 0; i < settings.getCount(); i++) {
+      const gridPosition = settings.getParticleGridPosition(i);
       const arrayIndex = i * 3;
 
-      positions[arrayIndex] = x;
-      positions[arrayIndex + 1] = y;
-      positions[arrayIndex + 2] = 0;
+      positions[arrayIndex] = gridPosition.x;
+      positions[arrayIndex + 1] = gridPosition.y;
+      positions[arrayIndex + 2] = gridPosition.z;
 
-      anchors[arrayIndex] = x;
-      anchors[arrayIndex + 1] = y;
-      anchors[arrayIndex + 2] = 0;
+      anchors[arrayIndex] = gridPosition.x;
+      anchors[arrayIndex + 1] = gridPosition.y;
+      anchors[arrayIndex + 2] = gridPosition.z;
 
-      // const color = new THREE.Color(255, 0, 0)
-      // colors[arrayIndex] = color.r;
-      // colors[arrayIndex + 1] = color.g;
-      // colors[arrayIndex + 2] = color.b;
+      const color = new THREE.Color(0, 0, 0)
+      colors[arrayIndex] = color.r;
+      colors[arrayIndex + 1] = color.g;
+      colors[arrayIndex + 2] = color.b;
     }
     
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    // particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const particleMaterial: THREE.PointsMaterial = new THREE.PointsMaterial({
-      size: 0.1,
-      color: new THREE.Color(0, 0, 0),
+      size: 5.0,
+      vertexColors: true,
     });
     
     const particleSystem: THREE.Points = new THREE.Points(particles, particleMaterial);
@@ -88,14 +81,13 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     camera.position.set(0, 0, 8);
     camera.lookAt(0, 0, 0);
 
-    // off screen initially
     const mouse: THREE.Vector2 = new THREE.Vector2(9999999, 9999999);
     const raycaster: THREE.Raycaster = new THREE.Raycaster();
 
     const mouseCube = new THREE.Mesh(
       new THREE.BoxGeometry(0.25, 0.25, 0.25),
       new THREE.MeshBasicMaterial({
-        color: 0xffffff,
+        color: 0xff00ff,
         transparent: true,
         opacity: 0.3,
         alphaTest: 0.1,
@@ -112,7 +104,9 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     window.addEventListener('mousemove', onMouseMove, false);
 
     // helper axes
-    const axesHelper = new THREE.AxesHelper(Math.min(normX, normY));
+    const axesHelper = new THREE.AxesHelper(
+      Math.min(settings.cameraNormalX, settings.cameraNormalY)
+    );
     scene.add(axesHelper);
 
     // animation loop
@@ -126,7 +120,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       raycaster.ray.at(camera.position.z, mouseIntersectPoint);
       
       // apply forces
-      for (let i = 0; i < settings.getParticleCount(); i++) {
+      for (let i = 0; i < settings.getCount(); i++) {
         const arrayIndex = i * 3;
 
         const anchorPosition = new THREE.Vector3(anchors[arrayIndex], anchors[arrayIndex + 1], anchors[arrayIndex + 2]);
@@ -151,7 +145,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       }
 
       // update positions
-      for (let i = 0; i < settings.getParticleCount(); i++) {
+      for (let i = 0; i < settings.getCount(); i++) {
         const arrayIndex = i * 3;
         positionsArray[arrayIndex] += velocities[arrayIndex]
         positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1]
