@@ -1,8 +1,16 @@
 .controls {
-  background-color: black;
+  background-color: #1f1f1f;
   color: white;
-  width: 100%;
   padding: 1rem;
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.checkbox {
+  width: fit-content;
 }
 
 .controls label {

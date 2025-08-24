@@ -158,18 +158,20 @@ export function withConfig<P extends object>(
           <WrappedComponent {...props} config={config} />
         ) : null}
         <div className={styles.controls}>
-          <input
-            type="checkbox"
-            name="debug-checkbox"
-            id="debug-checkbox"
-            onChange={(event) => {
-              if (options.current) {
-                options.current.debug = !!event.target.checked;
-                rerender();
-              }
-            }}
-          />
-          <label htmlFor="debug-checkbox">Debug</label>
+          <div className={styles.checkbox}>
+            <input
+              type="checkbox"
+              name="debug-checkbox"
+              id="debug-checkbox"
+              onChange={(event) => {
+                if (options.current) {
+                  options.current.debug = !!event.target.checked;
+                  rerender();
+                }
+              }}
+            />
+            <label htmlFor="debug-checkbox">Debug</label>
+          </div>
         </div>
       </div>
     );
