@@ -3,18 +3,20 @@ import * as THREE from 'three';
 export const gravitationalForce = (
   mouse: THREE.Vector3,
   particle: THREE.Vector3,
+  mouseGravityStrength: number,
+  mouseGravityRadiusPx: number,
 ): THREE.Vector3 => {
-  const mouseGravityStrength = 0.001;
-  const mouseGravityRadius = 5.0;
-
   let distance = particle.distanceTo(mouse);
 
-  if (distance > mouseGravityRadius) {
+  if (distance > mouseGravityRadiusPx) {
     return new THREE.Vector3(0, 0, 0);
   }
 
-  // caps the magnitude
-  distance = Math.max(distance, 0.2);
+  // our units are px, so this bumps up the grav strength
+  distance = distance / 100;
+
+  // caps the magnitude by creating a min distance
+  distance = Math.max(distance, 2.0);
 
   const direction = new THREE.Vector3()
     .subVectors(mouse, particle)
@@ -33,8 +35,8 @@ export const elasticForce = (
   anchor: THREE.Vector3,
   particlePosition: THREE.Vector3,
   particleVelocity: THREE.Vector3,
-  springConstant = 0.1,
-  dampingConstant = 0.1,
+  springConstant: number,
+  dampingConstant: number,
 ): THREE.Vector3 => {
   const displacement = particlePosition.clone().sub(anchor);
   const springForce = displacement.multiplyScalar(-springConstant);

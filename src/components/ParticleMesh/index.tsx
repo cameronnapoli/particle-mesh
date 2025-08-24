@@ -22,10 +22,10 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
 
     // create camera
     const camera = new THREE.OrthographicCamera(
-      -settings.cameraNormalX,
-      settings.cameraNormalX,
-      -settings.cameraNormalY,
-      settings.cameraNormalY,
+      -settings.width / 2,
+      settings.width / 2,
+      -settings.height / 2,
+      settings.height / 2,
       1,
       100,
     );
@@ -50,16 +50,16 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     const colors: Float32Array = new Float32Array(settings.count * 3);
 
     for (let i = 0; i < settings.count; i++) {
-      const gridPosition = settings.getParticlePosition(i);
+      const particlePosition = settings.findParticlePosition(i);
       const arrayIndex = i * 3;
 
-      positions[arrayIndex] = gridPosition.x;
-      positions[arrayIndex + 1] = gridPosition.y;
-      positions[arrayIndex + 2] = gridPosition.z;
+      positions[arrayIndex] = particlePosition.x;
+      positions[arrayIndex + 1] = particlePosition.y;
+      positions[arrayIndex + 2] = particlePosition.z;
 
-      anchors[arrayIndex] = gridPosition.x;
-      anchors[arrayIndex + 1] = gridPosition.y;
-      anchors[arrayIndex + 2] = gridPosition.z;
+      anchors[arrayIndex] = particlePosition.x;
+      anchors[arrayIndex + 1] = particlePosition.y;
+      anchors[arrayIndex + 2] = particlePosition.z;
 
       const color = new THREE.Color(0, 0, 0)
       colors[arrayIndex] = color.r;
@@ -85,7 +85,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     const raycaster: THREE.Raycaster = new THREE.Raycaster();
 
     const mouseCube = new THREE.Mesh(
-      new THREE.BoxGeometry(0.25, 0.25, 0.25),
+      new THREE.BoxGeometry(15.0, 15.0, 15.0),
       new THREE.MeshBasicMaterial({
         color: 0xff0000,
         transparent: true,
@@ -95,19 +95,19 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
         blending: THREE.NormalBlending,
       }),
     );
-    // const mouseCircle = new THREE.Mesh(
-    //   new THREE.CircleGeometry(5, 32),
-    //   new THREE.MeshBasicMaterial({
-    //     color: 0xff0000,
-    //     transparent: true,
-    //     opacity: 0.1,
-    //     side: THREE.DoubleSide,
-    //     alphaTest: 0.05,
-    //   })
-    // )
-    // mouseCircle.position.z = -0.1;
+    const mouseCircle = new THREE.Mesh(
+      new THREE.CircleGeometry(settings.mouseGravityRadiusPx, 32),
+      new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        transparent: true,
+        opacity: 0.1,
+        side: THREE.DoubleSide,
+        alphaTest: 0.05,
+      })
+    )
+    mouseCircle.position.z = -0.1;
     scene.add(mouseCube)
-    // scene.add(mouseCircle)
+    scene.add(mouseCircle)
 
     function onMouseMove(event: MouseEvent) {
       mouse.x = (event.clientX / settings.width) * 2 - 1;
@@ -116,10 +116,8 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     window.addEventListener('mousemove', onMouseMove, false);
 
     // helper axes
-    const axesHelper = new THREE.AxesHelper(
-      Math.min(settings.cameraNormalX, settings.cameraNormalY)
-    );
-    scene.add(axesHelper);
+    // const axesHelper = new THREE.AxesHelper(Math.min(settings.cameraNormalX, settings.cameraNormalY));
+    // scene.add(axesHelper);
 
     // animation loop
     const animate = () => {
@@ -139,7 +137,12 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
         const particlePosition = new THREE.Vector3(positionsArray[arrayIndex], positionsArray[arrayIndex + 1], positionsArray[arrayIndex + 2]);
 
         // mouse gravity
-        const gForce = gravitationalForce(mouseIntersectPoint, particlePosition)
+        const gForce = gravitationalForce(
+          mouseIntersectPoint,
+          particlePosition,
+          settings.mouseGravityStrength,
+          settings.mouseGravityRadiusPx,
+        )
         velocities[arrayIndex] += gForce.x;
         velocities[arrayIndex + 1] += gForce.y;
         velocities[arrayIndex + 2] += gForce.z;
@@ -150,7 +153,13 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
           velocities[arrayIndex + 1],
           velocities[arrayIndex + 2],
         )
-        const eForce = elasticForce(anchorPosition, particlePosition, particleVelocity)
+        const eForce = elasticForce(
+          anchorPosition,
+          particlePosition,
+          particleVelocity,
+          settings.springConstant,
+          settings.dampingConstant,
+        )
         velocities[arrayIndex] += eForce.x;
         velocities[arrayIndex + 1] += eForce.y;
         velocities[arrayIndex + 2] += eForce.z;
@@ -165,7 +174,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       }
 
       mouseCube.position.copy(mouseIntersectPoint)
-      // mouseCircle.position.copy(mouseIntersectPoint)
+      mouseCircle.position.copy(mouseIntersectPoint)
 
       particles.attributes.position.needsUpdate = true;
       
@@ -179,9 +188,10 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
 
     // handle window resize
     const handleResize = () => {
+      // TODO: reset settings
       // camera.aspect = settings.width / settings.height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(settings.width, settings.height);
+      // camera.updateProjectionMatrix();
+      // renderer.setSize(settings.width, settings.height);
     };
     window.addEventListener('resize', handleResize);
 
