@@ -1,23 +1,36 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
-import Controls from './Controls';
+import Controls from './Controls/Controls';
 
 const containerId = 'particle-mesh-container';
+
+type DotCount = 'few' | 'normal' | 'many'
+const dotCountToColumns = (value: DotCount) => {
+  switch (value) {
+    case 'few':
+      return 20;
+    case 'normal':
+      return 80;
+    case 'many':
+      return 160;
+  }
+  return 0;
+};
 
 interface Options {
   columns: number;
   mouseGravityStrength: number;
-  mouseGravityRadiusPx: number;
+  mouseGravityRadiusPx: number | null;
   springConstant: number;
   dampingConstant: number;
   debug: boolean;
 }
 
-const DEFAULT_OPTIONS: Options = {
+export const DEFAULT_OPTIONS: Options = {
   columns: 80,
-  mouseGravityStrength: 2.0,
-  mouseGravityRadiusPx: 150.0,
+  mouseGravityStrength: 6.0,
+  mouseGravityRadiusPx: 200.0,
   springConstant: 0.1,
   dampingConstant: 0.1,
   debug: false,
@@ -34,7 +47,7 @@ class Config {
 
   // environment
   mouseGravityStrength: number;
-  mouseGravityRadiusPx: number;
+  mouseGravityRadiusPx: number | null;
   springConstant: number;
   dampingConstant: number;
 
@@ -60,6 +73,10 @@ class Config {
   set cols(value: number) {
     this._cols = value;
     this._count = null;
+  }
+
+  set dotCount(value: DotCount) {
+    this.cols = dotCountToColumns(value);
   }
 
   private get _rows() {
@@ -152,7 +169,7 @@ export function withConfig<P extends object>(
     return (
       <div
         id={containerId}
-        style={{ width: '50vw', minHeight: '50vh', overflow: 'hidden', position: 'relative' }}
+        style={{ width: '75vw', minHeight: '75vh', overflow: 'hidden', position: 'relative' }}
       >
         {config ? (
           <WrappedComponent {...props} config={config} />
@@ -161,6 +178,24 @@ export function withConfig<P extends object>(
           onChangeDebug={(value) => {
             if (options.current) {
               options.current.debug = value;
+              rerender();
+            }
+          }}
+          onChangeDotCount={(value: DotCount) => {
+            if (options.current) {
+              options.current.columns = dotCountToColumns(value);
+              rerender();
+            }
+          }}
+          onChangeMouseGravityRadius={(value) => {
+            if (options.current) {
+              options.current.mouseGravityRadiusPx = value;
+              rerender();
+            }
+          }}
+          onChangeMouseGravityStrength={(value) => {
+            if (options.current) {
+              options.current.mouseGravityStrength = value;
               rerender();
             }
           }}

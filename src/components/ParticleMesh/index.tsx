@@ -95,7 +95,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
         blending: THREE.NormalBlending,
       }),
     );
-    let mouseCircle: THREE.Mesh | null = new THREE.Mesh(
+    let mouseCircle: THREE.Mesh | null = config.mouseGravityRadiusPx !== null ? new THREE.Mesh(
       new THREE.CircleGeometry(config.mouseGravityRadiusPx, 32),
       new THREE.MeshBasicMaterial({
         color: 0xff0000,
@@ -104,7 +104,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
         side: THREE.DoubleSide,
         alphaTest: 0.05,
       })
-    );
+    ) : null;
     if (!config.debug) {
       mouseCube = null;
       mouseCircle = null;
@@ -180,8 +180,10 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
         positionsArray[arrayIndex + 2] += velocities[arrayIndex + 2];
       }
 
-      if (mouseCube && mouseCircle) {
+      if (mouseCube) {
         mouseCube.position.copy(mouseIntersectPoint);
+      }
+      if (mouseCircle) {
         mouseCircle.position.copy(mouseIntersectPoint);
       }
 
