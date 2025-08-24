@@ -1,30 +1,30 @@
 import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 
-const containerId = 'particle-mesh-container'
+const containerId = 'particle-mesh-container';
 
 class Settings {
   // particles
-  private _cols = 80
-  private _count: number | null = null
+  private _cols = 80;
+  private _count: number | null = null;
 
   // canvas
-  private _width: number // px
-  private _height: number // px
+  private _width: number; // px
+  private _height: number; // px
 
   // environment
-  mouseGravityStrength = 2.0
-  mouseGravityRadiusPx = 150.0
-  springConstant = 0.1
-  dampingConstant = 0.1
+  mouseGravityStrength = 2.0;
+  mouseGravityRadiusPx = 150.0;
+  springConstant = 0.1;
+  dampingConstant = 0.1;
 
   constructor() {
-    const container = document.getElementById(containerId)
+    const container = document.getElementById(containerId);
     if (!container) {
-      throw new Error("Cannot find container")
+      throw new Error("Cannot find container");
     }
-    this._width = container.clientWidth
-    this._height = container.clientHeight
+    this._width = container.clientWidth;
+    this._height = container.clientHeight;
   }
   
   set cols(value: number) {
@@ -33,8 +33,8 @@ class Settings {
   }
   
   private get _rows() {
-    const aspect = this._width / this._height
-    return Math.floor(this._cols / aspect)
+    const aspect = this._width / this._height;
+    return Math.floor(this._cols / aspect);
   }
 
   get count() {
@@ -45,21 +45,21 @@ class Settings {
   }
 
   get width() {
-    return this._width
+    return this._width;
   }
 
   get height() {
-    return this._height
+    return this._height;
   }
 
   findParticlePosition(index: number) {
     const column = Math.floor(index / this._rows); // x
     const row = index % this._rows; // y
 
-    const padding = 0.9
+    const padding = 0.9;
 
-    const offsetX = (this._width) / this._cols * padding
-    const offsetY = (this._height) / this._rows * padding
+    const offsetX = (this._width) / this._cols * padding;
+    const offsetY = (this._height) / this._rows * padding;
 
     const gridMidpoint = new THREE.Vector3(
       (this._cols * offsetX) / 2,
@@ -71,7 +71,7 @@ class Settings {
       (offsetX * column) - (gridMidpoint.x),
       (offsetY * row) - (gridMidpoint.y),
       0,
-    )
+    );
   }
 }
 
@@ -83,11 +83,11 @@ export function withSettings<P extends object>(
   WrappedComponent: React.ComponentType<P & WithSettingsProps>,
 ) {
   return function WithSettingsComponent(props: P) {
-    const [settings, setSettings] = useState<Settings | null>(null)
+    const [settings, setSettings] = useState<Settings | null>(null);
 
     useEffect(() => {
-      setSettings(new Settings())
-    }, [])
+      setSettings(new Settings());
+    }, []);
 
     // resize handler
     useEffect(() => {
@@ -95,16 +95,16 @@ export function withSettings<P extends object>(
       const handle = () => {
         setSettings(null);
         timeout = setTimeout(() => setSettings(new Settings()), 100);
-      }
-      window.addEventListener('resize', handle)
+      };
+      window.addEventListener('resize', handle);
       return () => {
-        window.removeEventListener('resize', handle)
+        window.removeEventListener('resize', handle);
         if (timeout) {
-          clearTimeout(timeout)
-          timeout = null
+          clearTimeout(timeout);
+          timeout = null;
         }
-      }
-    }, [])
+      };
+    }, []);
     
     return (
       <div

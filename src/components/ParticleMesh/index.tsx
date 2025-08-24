@@ -18,7 +18,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     // initialize Three.js scene
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color(0xdddddd)
+    scene.background = new THREE.Color(0xdddddd);
 
     // create camera
     const camera = new THREE.OrthographicCamera(
@@ -39,7 +39,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     // renderer.setClearColor(0x000000);
     rendererRef.current = renderer;
 
-    const mountContainer = mountRef.current
+    const mountContainer = mountRef.current;
     const canvasElement = renderer.domElement;
     mountContainer.appendChild(canvasElement);
 
@@ -61,7 +61,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       anchors[arrayIndex + 1] = particlePosition.y;
       anchors[arrayIndex + 2] = particlePosition.z;
 
-      const color = new THREE.Color(0, 0, 0)
+      const color = new THREE.Color(0, 0, 0);
       colors[arrayIndex] = color.r;
       colors[arrayIndex + 1] = color.g;
       colors[arrayIndex + 2] = color.b;
@@ -104,10 +104,10 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
         side: THREE.DoubleSide,
         alphaTest: 0.05,
       })
-    )
+    );
     mouseCircle.position.z = -0.1;
-    scene.add(mouseCube)
-    scene.add(mouseCircle)
+    scene.add(mouseCube);
+    scene.add(mouseCircle);
 
     function onMouseMove(event: MouseEvent) {
       mouse.x = (event.clientX / settings.width) * 2 - 1;
@@ -142,7 +142,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
           particlePosition,
           settings.mouseGravityStrength,
           settings.mouseGravityRadiusPx,
-        )
+        );
         velocities[arrayIndex] += gForce.x;
         velocities[arrayIndex + 1] += gForce.y;
         velocities[arrayIndex + 2] += gForce.z;
@@ -152,14 +152,14 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
           velocities[arrayIndex],
           velocities[arrayIndex + 1],
           velocities[arrayIndex + 2],
-        )
+        );
         const eForce = elasticForce(
           anchorPosition,
           particlePosition,
           particleVelocity,
           settings.springConstant,
           settings.dampingConstant,
-        )
+        );
         velocities[arrayIndex] += eForce.x;
         velocities[arrayIndex + 1] += eForce.y;
         velocities[arrayIndex + 2] += eForce.z;
@@ -168,13 +168,13 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       // update positions
       for (let i = 0; i < settings.count; i++) {
         const arrayIndex = i * 3;
-        positionsArray[arrayIndex] += velocities[arrayIndex]
-        positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1]
-        positionsArray[arrayIndex + 2] += velocities[arrayIndex + 2]
+        positionsArray[arrayIndex] += velocities[arrayIndex];
+        positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1];
+        positionsArray[arrayIndex + 2] += velocities[arrayIndex + 2];
       }
 
-      mouseCube.position.copy(mouseIntersectPoint)
-      mouseCircle.position.copy(mouseIntersectPoint)
+      mouseCube.position.copy(mouseIntersectPoint);
+      mouseCircle.position.copy(mouseIntersectPoint);
 
       particles.attributes.position.needsUpdate = true;
       

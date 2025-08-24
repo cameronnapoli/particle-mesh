@@ -28,8 +28,8 @@ export const gravitationalForce = (
     direction.x * magnitude,
     direction.y * magnitude,
     direction.z * magnitude,
-  )
-}
+  );
+};
 
 export const elasticForce = (
   anchor: THREE.Vector3,
@@ -42,4 +42,4 @@ export const elasticForce = (
   const springForce = displacement.multiplyScalar(-springConstant);
   const dampingForce = particleVelocity.clone().multiplyScalar(-dampingConstant);
   return springForce.add(dampingForce);
-}
+};
