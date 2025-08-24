@@ -1,0 +1,74 @@
+.controls {
+  border-radius: 6px;
+  background-color: #1f1f1faa;
+  backdrop-filter: blur(8px);
+  color: white;
+  padding: 1rem;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  right: 0.5rem;
+
+  font-family: monospace;
+}
+
+.header {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.collapseButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.collapsedButton {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #1f1f1faa;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  border: none;
+
+  &:hover {
+    background-color: #1f1f1fdd;
+  }
+}
+
+.checkbox {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+}
+
+.controls label {
+  padding-left: 4px;
+}

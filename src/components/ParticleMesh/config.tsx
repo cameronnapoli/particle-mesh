@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
-import styles from './styles.module.scss';
+import Controls from './Controls';
 
 const containerId = 'particle-mesh-container';
 
@@ -152,27 +152,19 @@ export function withConfig<P extends object>(
     return (
       <div
         id={containerId}
-        style={{ width: '50vw', minHeight: '50vh', overflow: 'hidden' }}
+        style={{ width: '50vw', minHeight: '50vh', overflow: 'hidden', position: 'relative' }}
       >
         {config ? (
           <WrappedComponent {...props} config={config} />
         ) : null}
-        <div className={styles.controls}>
-          <div className={styles.checkbox}>
-            <input
-              type="checkbox"
-              name="debug-checkbox"
-              id="debug-checkbox"
-              onChange={(event) => {
-                if (options.current) {
-                  options.current.debug = !!event.target.checked;
-                  rerender();
-                }
-              }}
-            />
-            <label htmlFor="debug-checkbox">Debug</label>
-          </div>
-        </div>
+        <Controls
+          onChangeDebug={(value) => {
+            if (options.current) {
+              options.current.debug = value;
+              rerender();
+            }
+          }}
+        />
       </div>
     );
   };
