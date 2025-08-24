@@ -21,7 +21,7 @@ class Settings {
   constructor() {
     const container = document.getElementById(containerId);
     if (!container) {
-      throw new Error("Cannot find container");
+      throw new Error('Cannot find container');
     }
     this._width = container.clientWidth;
     this._height = container.clientHeight;
