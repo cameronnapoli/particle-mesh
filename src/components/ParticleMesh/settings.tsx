@@ -1,20 +1,31 @@
 import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 
+const containerId = 'particle-mesh-container'
+
 class Settings {
   // particles
   private _cols = 80
   private _count: number | null = null
 
   // canvas
-  private _width = window.innerWidth // px
-  private _height = window.innerHeight // px
+  private _width: number // px
+  private _height: number // px
 
   // environment
   mouseGravityStrength = 2.0
   mouseGravityRadiusPx = 150.0
   springConstant = 0.1
   dampingConstant = 0.1
+
+  constructor() {
+    const container = document.getElementById(containerId)
+    if (!container) {
+      throw new Error("Cannot find container")
+    }
+    this._width = container.clientWidth
+    this._height = container.clientHeight
+  }
   
   set cols(value: number) {
     this._cols = value;
@@ -77,11 +88,16 @@ export function withSettings<P extends object>(
     useEffect(() => {
       setSettings(new Settings())
     }, [])
-
-    if (!settings) {
-      return null;
-    }
     
-    return <WrappedComponent {...props} settings={settings} />;
+    return (
+      <div
+        id={containerId}
+        style={{ width: '50vw', height: '50vh', overflow: 'hidden' }}
+      >
+        {settings ? (
+          <WrappedComponent {...props} settings={settings} />
+        ) : null}
+      </div>
+    );
   };
 }
