@@ -169,6 +169,7 @@ export function withConfig<P extends object>(
     return (
       <div
         id={containerId}
+        // TODO: pass as props
         style={{ width: '75vw', minHeight: '75vh', overflow: 'hidden', position: 'relative' }}
       >
         {config ? (
