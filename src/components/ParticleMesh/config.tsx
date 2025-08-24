@@ -6,16 +6,26 @@ import styles from './styles.module.scss';
 const containerId = 'particle-mesh-container';
 
 interface Options {
+  columns: number;
+  mouseGravityStrength: number;
+  mouseGravityRadiusPx: number;
+  springConstant: number;
+  dampingConstant: number;
   debug: boolean;
 }
 
 const DEFAULT_OPTIONS: Options = {
-  debug: false
+  columns: 80,
+  mouseGravityStrength: 2.0,
+  mouseGravityRadiusPx: 150.0,
+  springConstant: 0.1,
+  dampingConstant: 0.1,
+  debug: false,
 };
 
 class Config {
   // particles
-  private _cols = 80;
+  private _cols: number;
   private _count: number | null = null;
 
   // canvas
@@ -23,23 +33,28 @@ class Config {
   private _height: number; // px
 
   // environment
-  mouseGravityStrength = 2.0;
-  mouseGravityRadiusPx = 150.0;
-  springConstant = 0.1;
-  dampingConstant = 0.1;
+  mouseGravityStrength: number;
+  mouseGravityRadiusPx: number;
+  springConstant: number;
+  dampingConstant: number;
 
   // misc
   debug: boolean;
 
   constructor(options: Options) {
+    this._cols = options.columns;
+    this.mouseGravityStrength = options.mouseGravityStrength;
+    this.mouseGravityRadiusPx = options.mouseGravityRadiusPx;
+    this.springConstant = options.springConstant;
+    this.dampingConstant = options.dampingConstant;
+    this.debug = options.debug;
+
     const container = document.getElementById(containerId);
     if (!container) {
       throw new Error('Cannot find container');
     }
     this._width = container.clientWidth;
     this._height = container.clientHeight;
-
-    this.debug = options.debug;
   }
 
   set cols(value: number) {
