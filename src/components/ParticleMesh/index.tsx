@@ -44,13 +44,13 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     mountContainer.appendChild(canvasElement);
 
     const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
-    const positions: Float32Array = new Float32Array(settings.getCount() * 3);
-    const anchors: Float32Array = new Float32Array(settings.getCount() * 3);
-    const velocities: Float32Array = new Float32Array(settings.getCount() * 3);
-    const colors: Float32Array = new Float32Array(settings.getCount() * 3);
+    const positions: Float32Array = new Float32Array(settings.count * 3);
+    const anchors: Float32Array = new Float32Array(settings.count * 3);
+    const velocities: Float32Array = new Float32Array(settings.count * 3);
+    const colors: Float32Array = new Float32Array(settings.count * 3);
 
-    for (let i = 0; i < settings.getCount(); i++) {
-      const gridPosition = settings.getParticleGridPosition(i);
+    for (let i = 0; i < settings.count; i++) {
+      const gridPosition = settings.getParticlePosition(i);
       const arrayIndex = i * 3;
 
       positions[arrayIndex] = gridPosition.x;
@@ -132,7 +132,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       raycaster.ray.at(camera.position.z, mouseIntersectPoint);
       
       // apply forces
-      for (let i = 0; i < settings.getCount(); i++) {
+      for (let i = 0; i < settings.count; i++) {
         const arrayIndex = i * 3;
 
         const anchorPosition = new THREE.Vector3(anchors[arrayIndex], anchors[arrayIndex + 1], anchors[arrayIndex + 2]);
@@ -157,7 +157,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       }
 
       // update positions
-      for (let i = 0; i < settings.getCount(); i++) {
+      for (let i = 0; i < settings.count; i++) {
         const arrayIndex = i * 3;
         positionsArray[arrayIndex] += velocities[arrayIndex]
         positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1]

@@ -5,60 +5,55 @@ class Settings {
   // particles
   private _rows = 40
   private _cols = 80
-  private _gap = 0.25
   private _count: number | null = null
 
   // canvas
-  width = window.innerWidth
-  height = window.innerHeight
-  cameraNormalY = 20 / 2 // proportional units to screen height
-  cameraNormalX = this.cameraNormalY * (this.width / this.height)
+  private _width = window.innerWidth
+  private _height = window.innerHeight
+  cameraNormalY = 10 // y axis units
+  cameraNormalX = this.cameraNormalY * (this._width / this._height)
 
-  getRows() {
-    return this._rows;
-  }
-
-  getCols() {
-    return this._cols;
-  }
-
-  getGap() {
-    return this._gap;
-  }
-
-  setRows(rows: number) {
-    this._rows = rows;
+  set rows(value: number) {
+    this._rows = value;
     this._count = null;
   }
   
-  setCols(cols: number) {
-    this._cols = cols;
+  set cols(value: number) {
+    this._cols = value;
     this._count = null;
   }
 
-  getCount() {
+  get count() {
     if (this._count === null) {
       this._count = this._rows * this._cols;
     }
     return this._count;
   }
 
-  getParticleGridPosition(index: number) {
-    const column = Math.floor(index / this.getRows());
-    const row = index % this.getRows();
-
-    const x = (column * this.getGap()) - this._getGridMidpoint().x;
-    const y = (row * this.getGap()) -  this._getGridMidpoint().y;
-
-    return new THREE.Vector3(x, y, 0)
+  get width() {
+    return this._width
   }
 
-  private _getGridMidpoint() {
-    return new THREE.Vector3(
-      (this._cols * this._gap) / 2,
-      (this._rows * this._gap) / 2,
+  get height() {
+    return this._height
+  }
+
+  getParticlePosition(index: number) {
+    const column = Math.floor(index / this._rows);
+    const row = index % this._rows;
+
+    const gap = 0.2;
+
+    const gridMidpoint = new THREE.Vector3(
+      (this._cols * gap) / 2,
+      (this._rows * gap) / 2,
       0,
     );
+
+    const x = (column * gap) - gridMidpoint.x;
+    const y = (row * gap) -  gridMidpoint.y;
+
+    return new THREE.Vector3(x, y, 0)
   }
 }
 
