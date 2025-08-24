@@ -1,9 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+
+import styles from './styles.module.scss';
 
 const containerId = 'particle-mesh-container';
 
-class Settings {
+interface Options {
+  debug: boolean;
+}
+
+const DEFAULT_OPTIONS: Options = {
+  debug: false
+};
+
+class Config {
   // particles
   private _cols = 80;
   private _count: number | null = null;
@@ -18,20 +28,25 @@ class Settings {
   springConstant = 0.1;
   dampingConstant = 0.1;
 
-  constructor() {
+  // misc
+  debug: boolean;
+
+  constructor(options: Options) {
     const container = document.getElementById(containerId);
     if (!container) {
       throw new Error('Cannot find container');
     }
     this._width = container.clientWidth;
     this._height = container.clientHeight;
+
+    this.debug = options.debug;
   }
-  
+
   set cols(value: number) {
     this._cols = value;
     this._count = null;
   }
-  
+
   private get _rows() {
     const aspect = this._width / this._height;
     return Math.floor(this._cols / aspect);
@@ -75,26 +90,39 @@ class Settings {
   }
 }
 
-export type WithSettingsProps = {
-  settings: Settings;
+export type WithConfigProps = {
+  config: Config;
 }
 
-export function withSettings<P extends object>(
-  WrappedComponent: React.ComponentType<P & WithSettingsProps>,
+export function withConfig<P extends object>(
+  WrappedComponent: React.ComponentType<P & WithConfigProps>,
 ) {
-  return function WithSettingsComponent(props: P) {
-    const [settings, setSettings] = useState<Settings | null>(null);
+  return function WithConfigComponent(props: P) {
+    const options = useRef<Options>(DEFAULT_OPTIONS);
+    const [config, setConfig] = useState<Config | null>(null);
 
     useEffect(() => {
-      setSettings(new Settings());
+      setConfig(new Config(options.current));
+    }, []);
+
+    const rerender = useCallback(() => {
+      setConfig(null);
+      let timeout: NodeJS.Timeout | null = null;
+      timeout = setTimeout(() => setConfig(new Config(options.current)), 100);
+      return () => {
+        if (timeout) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
+      };
     }, []);
 
     // resize handler
     useEffect(() => {
       let timeout: NodeJS.Timeout | null = null;
       const handle = () => {
-        setSettings(null);
-        timeout = setTimeout(() => setSettings(new Settings()), 100);
+        setConfig(null);
+        timeout = setTimeout(() => setConfig(new Config(options.current)), 100);
       };
       window.addEventListener('resize', handle);
       return () => {
@@ -105,15 +133,29 @@ export function withSettings<P extends object>(
         }
       };
     }, []);
-    
+
     return (
       <div
         id={containerId}
-        style={{ width: '50vw', height: '50vh', overflow: 'hidden' }}
+        style={{ width: '50vw', minHeight: '50vh', overflow: 'hidden' }}
       >
-        {settings ? (
-          <WrappedComponent {...props} settings={settings} />
+        {config ? (
+          <WrappedComponent {...props} config={config} />
         ) : null}
+        <div className={styles.controls}>
+          <input
+            type="checkbox"
+            name="debug-checkbox"
+            id="debug-checkbox"
+            onChange={(event) => {
+              if (options.current) {
+                options.current.debug = !!event.target.checked;
+                rerender();
+              }
+            }}
+          />
+          <label htmlFor="debug-checkbox">Debug</label>
+        </div>
       </div>
     );
   };

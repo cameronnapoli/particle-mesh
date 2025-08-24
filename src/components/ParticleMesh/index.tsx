@@ -2,10 +2,10 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { gravitationalForce, elasticForce } from './forces';
-import { WithSettingsProps, withSettings } from './settings';
+import { WithConfigProps, withConfig } from './config';
 // import { useStats } from './useStats';
 
-const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) => {
+const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -22,10 +22,10 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
 
     // create camera
     const camera = new THREE.OrthographicCamera(
-      -settings.width / 2,
-      settings.width / 2,
-      -settings.height / 2,
-      settings.height / 2,
+      -config.width / 2,
+      config.width / 2,
+      -config.height / 2,
+      config.height / 2,
       1,
       100,
     );
@@ -35,7 +35,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       antialias: true,
       powerPreference: 'high-performance',
     });
-    renderer.setSize(settings.width, settings.height);
+    renderer.setSize(config.width, config.height);
     // renderer.setClearColor(0x000000);
     rendererRef.current = renderer;
 
@@ -44,13 +44,13 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     mountContainer.appendChild(canvasElement);
 
     const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
-    const positions: Float32Array = new Float32Array(settings.count * 3);
-    const anchors: Float32Array = new Float32Array(settings.count * 3);
-    const velocities: Float32Array = new Float32Array(settings.count * 3);
-    const colors: Float32Array = new Float32Array(settings.count * 3);
+    const positions: Float32Array = new Float32Array(config.count * 3);
+    const anchors: Float32Array = new Float32Array(config.count * 3);
+    const velocities: Float32Array = new Float32Array(config.count * 3);
+    const colors: Float32Array = new Float32Array(config.count * 3);
 
-    for (let i = 0; i < settings.count; i++) {
-      const particlePosition = settings.findParticlePosition(i);
+    for (let i = 0; i < config.count; i++) {
+      const particlePosition = config.findParticlePosition(i);
       const arrayIndex = i * 3;
 
       positions[arrayIndex] = particlePosition.x;
@@ -66,7 +66,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       colors[arrayIndex + 1] = color.g;
       colors[arrayIndex + 2] = color.b;
     }
-    
+
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
@@ -74,7 +74,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       size: 5.0,
       vertexColors: true,
     });
-    
+
     const particleSystem: THREE.Points = new THREE.Points(particles, particleMaterial);
     scene.add(particleSystem);
 
@@ -84,7 +84,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
     const mouse: THREE.Vector2 = new THREE.Vector2(9999999, 9999999);
     const raycaster: THREE.Raycaster = new THREE.Raycaster();
 
-    const mouseCube = new THREE.Mesh(
+    let mouseCube: THREE.Mesh | null = new THREE.Mesh(
       new THREE.BoxGeometry(15.0, 15.0, 15.0),
       new THREE.MeshBasicMaterial({
         color: 0xff0000,
@@ -95,8 +95,8 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
         blending: THREE.NormalBlending,
       }),
     );
-    const mouseCircle = new THREE.Mesh(
-      new THREE.CircleGeometry(settings.mouseGravityRadiusPx, 32),
+    let mouseCircle: THREE.Mesh | null = new THREE.Mesh(
+      new THREE.CircleGeometry(config.mouseGravityRadiusPx, 32),
       new THREE.MeshBasicMaterial({
         color: 0xff0000,
         transparent: true,
@@ -105,18 +105,25 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
         alphaTest: 0.05,
       })
     );
-    mouseCircle.position.z = -0.1;
-    scene.add(mouseCube);
-    scene.add(mouseCircle);
+    if (!config.debug) {
+      mouseCube = null;
+      mouseCircle = null;
+    }
+
+    if (mouseCircle && mouseCube) {
+      mouseCircle.position.z = -0.1;
+      scene.add(mouseCube);
+      scene.add(mouseCircle);
+    }
 
     function onMouseMove(event: MouseEvent) {
-      mouse.x = (event.clientX / settings.width) * 2 - 1;
-      mouse.y = -(event.clientY / settings.height) * 2 + 1;
+      mouse.x = (event.clientX / config.width) * 2 - 1;
+      mouse.y = -(event.clientY / config.height) * 2 + 1;
     }
     window.addEventListener('mousemove', onMouseMove, false);
 
     // helper axes
-    // const axesHelper = new THREE.AxesHelper(Math.min(settings.cameraNormalX, settings.cameraNormalY));
+    // const axesHelper = new THREE.AxesHelper(Math.min(config.cameraNormalX, config.cameraNormalY));
     // scene.add(axesHelper);
 
     // animation loop
@@ -128,9 +135,9 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       raycaster.setFromCamera(mouse, camera);
       const mouseIntersectPoint: THREE.Vector3 = new THREE.Vector3();
       raycaster.ray.at(camera.position.z, mouseIntersectPoint);
-      
+
       // apply forces
-      for (let i = 0; i < settings.count; i++) {
+      for (let i = 0; i < config.count; i++) {
         const arrayIndex = i * 3;
 
         const anchorPosition = new THREE.Vector3(anchors[arrayIndex], anchors[arrayIndex + 1], anchors[arrayIndex + 2]);
@@ -140,8 +147,8 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
         const gForce = gravitationalForce(
           mouseIntersectPoint,
           particlePosition,
-          settings.mouseGravityStrength,
-          settings.mouseGravityRadiusPx,
+          config.mouseGravityStrength,
+          config.mouseGravityRadiusPx,
         );
         velocities[arrayIndex] += gForce.x;
         velocities[arrayIndex + 1] += gForce.y;
@@ -157,8 +164,8 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
           anchorPosition,
           particlePosition,
           particleVelocity,
-          settings.springConstant,
-          settings.dampingConstant,
+          config.springConstant,
+          config.dampingConstant,
         );
         velocities[arrayIndex] += eForce.x;
         velocities[arrayIndex + 1] += eForce.y;
@@ -166,20 +173,22 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       }
 
       // update positions
-      for (let i = 0; i < settings.count; i++) {
+      for (let i = 0; i < config.count; i++) {
         const arrayIndex = i * 3;
         positionsArray[arrayIndex] += velocities[arrayIndex];
         positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1];
         positionsArray[arrayIndex + 2] += velocities[arrayIndex + 2];
       }
 
-      mouseCube.position.copy(mouseIntersectPoint);
-      mouseCircle.position.copy(mouseIntersectPoint);
+      if (mouseCube && mouseCircle) {
+        mouseCube.position.copy(mouseIntersectPoint);
+        mouseCircle.position.copy(mouseIntersectPoint);
+      }
 
       particles.attributes.position.needsUpdate = true;
-      
+
       renderer.render(scene, camera);
-      
+
       animationFrameRef.current = requestAnimationFrame(animate);
 
       // stats.current?.end()
@@ -196,7 +205,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       }
       window.removeEventListener('mousemove', onMouseMove, false);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -204,4 +213,4 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
   );
 };
 
-export default withSettings(ParticleMesh);
+export default withConfig(ParticleMesh);

@@ -4,11 +4,11 @@ export const gravitationalForce = (
   mouse: THREE.Vector3,
   particle: THREE.Vector3,
   mouseGravityStrength: number,
-  mouseGravityRadiusPx: number,
+  mouseGravityRadiusPx: number | null,
 ): THREE.Vector3 => {
   let distance = particle.distanceTo(mouse);
 
-  if (distance > mouseGravityRadiusPx) {
+  if (mouseGravityRadiusPx !== null && distance > mouseGravityRadiusPx) {
     return new THREE.Vector3(0, 0, 0);
   }
 
@@ -21,7 +21,7 @@ export const gravitationalForce = (
   const direction = new THREE.Vector3()
     .subVectors(mouse, particle)
     .normalize();
-  
+
   const magnitude = mouseGravityStrength / (distance * distance);
 
   return new THREE.Vector3(
