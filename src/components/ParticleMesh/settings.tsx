@@ -83,10 +83,27 @@ export function withSettings<P extends object>(
   WrappedComponent: React.ComponentType<P & WithSettingsProps>,
 ) {
   return function WithSettingsComponent(props: P) {
-    const [settings, setSettings] = useState<Settings>()
+    const [settings, setSettings] = useState<Settings | null>(null)
 
     useEffect(() => {
       setSettings(new Settings())
+    }, [])
+
+    // resize handler
+    useEffect(() => {
+      let timeout: NodeJS.Timeout | null = null;
+      const handle = () => {
+        setSettings(null);
+        timeout = setTimeout(() => setSettings(new Settings()), 100);
+      }
+      window.addEventListener('resize', handle)
+      return () => {
+        window.removeEventListener('resize', handle)
+        if (timeout) {
+          clearTimeout(timeout)
+          timeout = null
+        }
+      }
     }, [])
     
     return (

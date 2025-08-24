@@ -3,14 +3,14 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { gravitationalForce, elasticForce } from './forces';
 import { WithSettingsProps, withSettings } from './settings';
-import { useStats } from './useStats';
+// import { useStats } from './useStats';
 
 const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const stats = useStats()
+  // const stats = useStats()
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -121,7 +121,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
 
     // animation loop
     const animate = () => {
-      stats.current?.begin();
+      // stats.current?.begin();
 
       const positionsArray = particles.attributes.position.array as Float32Array;
 
@@ -182,18 +182,9 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       
       animationFrameRef.current = requestAnimationFrame(animate);
 
-      stats.current?.end()
+      // stats.current?.end()
     };
     animate();
-
-    // handle window resize
-    const handleResize = () => {
-      // TODO: reset settings
-      // camera.aspect = settings.width / settings.height;
-      // camera.updateProjectionMatrix();
-      // renderer.setSize(settings.width, settings.height);
-    };
-    window.addEventListener('resize', handleResize);
 
     return () => {
       if (animationFrameRef.current) {
@@ -203,7 +194,6 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       if (rendererRef.current) {
         rendererRef.current.dispose();
       }
-      window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', onMouseMove, false);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
