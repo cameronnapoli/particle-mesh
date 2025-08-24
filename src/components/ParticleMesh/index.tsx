@@ -95,19 +95,19 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
         blending: THREE.NormalBlending,
       }),
     );
-    const mouseCircle = new THREE.Mesh(
-      new THREE.CircleGeometry(5, 32),
-      new THREE.MeshBasicMaterial({
-        color: 0xff0000,
-        transparent: true,
-        opacity: 0.1,
-        side: THREE.DoubleSide,
-        alphaTest: 0.05,
-      })
-    )
-    mouseCircle.position.z = -0.1;
+    // const mouseCircle = new THREE.Mesh(
+    //   new THREE.CircleGeometry(5, 32),
+    //   new THREE.MeshBasicMaterial({
+    //     color: 0xff0000,
+    //     transparent: true,
+    //     opacity: 0.1,
+    //     side: THREE.DoubleSide,
+    //     alphaTest: 0.05,
+    //   })
+    // )
+    // mouseCircle.position.z = -0.1;
     scene.add(mouseCube)
-    scene.add(mouseCircle)
+    // scene.add(mouseCircle)
 
     function onMouseMove(event: MouseEvent) {
       mouse.x = (event.clientX / settings.width) * 2 - 1;
@@ -165,7 +165,7 @@ const ParticleMesh: React.FunctionComponent<WithSettingsProps> = ({ settings }) 
       }
 
       mouseCube.position.copy(mouseIntersectPoint)
-      mouseCircle.position.copy(mouseIntersectPoint)
+      // mouseCircle.position.copy(mouseIntersectPoint)
 
       particles.attributes.position.needsUpdate = true;
       
