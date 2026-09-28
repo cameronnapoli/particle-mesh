@@ -66,7 +66,7 @@ const Controls: React.FunctionComponent<Props> = ({
         min={50}
         max={250}
         step={50}
-        defaultValue={DEFAULT_OPTIONS.mouseGravityRadiusPx ?? 0}
+        defaultValue={DEFAULT_OPTIONS.mouseGravityRadiusPx ?? 250}
         onChange={(value) => {
           if (value === 250) {
             onChangeMouseGravityRadius(null);
