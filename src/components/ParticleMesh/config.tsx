@@ -128,8 +128,9 @@ export function withConfig<P extends object>(
 
     const containerStyle: React.CSSProperties = {
       width: '100%',
-      height: '500px',
+      height: '100%',
       overflow: 'hidden',
+      borderRadius: '12px',
       position: 'relative',
       backgroundColor: '#f5f5f5',
     };

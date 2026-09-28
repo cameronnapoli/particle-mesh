@@ -3,7 +3,7 @@ import styles from './page.module.scss';
 
 export default function Home() {
   return (
-    <main className={styles.main} style={{ padding: '4rem' }}>
+    <main className={styles.main} style={{ padding: '4rem', height: '100svh' }}>
       <ParticleMesh />
     </main>
   );
