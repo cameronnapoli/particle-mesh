@@ -4,21 +4,17 @@ import * as THREE from 'three';
 
 import { WithConfigProps, withConfig } from './config';
 import { gravitationalForce, elasticForce } from './forces';
-// import { useStats } from './useStats';
 
 const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
   const mountRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  // const stats = useStats()
 
   useEffect(() => {
     if (!mountRef.current) return;
 
     // initialize Three.js scene
     const scene = new THREE.Scene();
-    sceneRef.current = scene;
     scene.background = new THREE.Color(0xf5f5f5);
 
     // create camera
@@ -37,7 +33,6 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
       powerPreference: 'high-performance',
     });
     renderer.setSize(config.width, config.height);
-    // renderer.setClearColor(0x000000);
     rendererRef.current = renderer;
 
     const mountContainer = mountRef.current;
@@ -85,38 +80,6 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
     const mouse: THREE.Vector2 = new THREE.Vector2(9999999, 9999999);
     const raycaster: THREE.Raycaster = new THREE.Raycaster();
 
-    let mouseCube: THREE.Mesh | null = new THREE.Mesh(
-      new THREE.BoxGeometry(15.0, 15.0, 15.0),
-      new THREE.MeshBasicMaterial({
-        color: 0xff0000,
-        transparent: true,
-        opacity: 0.3,
-        alphaTest: 0.1,
-        depthWrite: false,
-        blending: THREE.NormalBlending,
-      }),
-    );
-    let mouseCircle: THREE.Mesh | null = config.mouseGravityRadiusPx !== null ? new THREE.Mesh(
-      new THREE.CircleGeometry(config.mouseGravityRadiusPx, 32),
-      new THREE.MeshBasicMaterial({
-        color: 0xff0000,
-        transparent: true,
-        opacity: 0.1,
-        side: THREE.DoubleSide,
-        alphaTest: 0.05,
-      })
-    ) : null;
-    if (!config.debug) {
-      mouseCube = null;
-      mouseCircle = null;
-    }
-
-    if (mouseCircle && mouseCube) {
-      mouseCircle.position.z = -0.1;
-      scene.add(mouseCube);
-      scene.add(mouseCircle);
-    }
-
     function onMouseMove(event: MouseEvent) {
       const rect = canvasElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / config.width) * 2 - 1;
@@ -124,14 +87,8 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
     }
     window.addEventListener('mousemove', onMouseMove, false);
 
-    // helper axes
-    // const axesHelper = new THREE.AxesHelper(Math.min(config.cameraNormalX, config.cameraNormalY));
-    // scene.add(axesHelper);
-
     // animation loop
     const animate = () => {
-      // stats.current?.begin();
-
       const positionsArray = particles.attributes.position.array as Float32Array;
 
       raycaster.setFromCamera(mouse, camera);
@@ -182,20 +139,11 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
         positionsArray[arrayIndex + 2] += velocities[arrayIndex + 2];
       }
 
-      if (mouseCube) {
-        mouseCube.position.copy(mouseIntersectPoint);
-      }
-      if (mouseCircle) {
-        mouseCircle.position.copy(mouseIntersectPoint);
-      }
-
       particles.attributes.position.needsUpdate = true;
 
       renderer.render(scene, camera);
 
       animationFrameRef.current = requestAnimationFrame(animate);
-
-      // stats.current?.end()
     };
     animate();
 

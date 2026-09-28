@@ -7,14 +7,12 @@ import RangeStep from './RangeStep';
 import styles from './styles.module.scss';
 
 interface Props {
-  onChangeDebug: (value: boolean) => void;
   onChangeDotCount: (value: 'few' | 'normal' | 'many') => void;
   onChangeMouseGravityRadius: (value: number | null) => void;
   onChangeMouseGravityStrength: (value: number) => void;
 }
 
 const Controls: React.FunctionComponent<Props> = ({
-  // onChangeDebug,
   onChangeDotCount,
   onChangeMouseGravityRadius,
   onChangeMouseGravityStrength,
@@ -86,18 +84,8 @@ const Controls: React.FunctionComponent<Props> = ({
         defaultValue={DEFAULT_OPTIONS.mouseGravityStrength}
         onChange={onChangeMouseGravityStrength}
       />
-
-      {/* <Checkbox
-        id="debug-checkbox"
-        label="Debug"
-        defaultChecked={DEFAULT_OPTIONS.debug}
-        onChange={(event) => {
-          onChangeDebug(event.target.checked);
-        }}
-      /> */}
     </div>
   );
 };
 
 export default Controls;
-export { default as RangeStep } from './RangeStep';

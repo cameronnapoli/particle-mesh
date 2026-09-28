@@ -21,7 +21,6 @@ interface Options {
   mouseGravityRadiusPx: number | null;
   springConstant: number;
   dampingConstant: number;
-  debug: boolean;
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -30,7 +29,6 @@ export const DEFAULT_OPTIONS: Options = {
   mouseGravityRadiusPx: null,
   springConstant: 0.1,
   dampingConstant: 0.1,
-  debug: false,
 };
 
 class Config {
@@ -48,27 +46,14 @@ class Config {
   springConstant: number;
   dampingConstant: number;
 
-  // misc
-  debug: boolean;
-
   constructor(container: HTMLElement, options: Options) {
     this._cols = options.columns;
     this.mouseGravityStrength = options.mouseGravityStrength;
     this.mouseGravityRadiusPx = options.mouseGravityRadiusPx;
     this.springConstant = options.springConstant;
     this.dampingConstant = options.dampingConstant;
-    this.debug = options.debug;
     this._width = container.clientWidth;
     this._height = container.clientHeight;
-  }
-
-  set cols(value: number) {
-    this._cols = value;
-    this._count = null;
-  }
-
-  set dotCount(value: DotCount) {
-    this.cols = dotCountToColumns(value);
   }
 
   private get _rows() {
@@ -187,12 +172,6 @@ export function withConfig<P extends object>(
           <WrappedComponent {...props} config={config} />
         ) : null}
         <Controls
-          onChangeDebug={(value) => {
-            if (options.current) {
-              options.current.debug = value;
-              rerender();
-            }
-          }}
           onChangeDotCount={(value: DotCount) => {
             if (options.current) {
               options.current.columns = dotCountToColumns(value);
