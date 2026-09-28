@@ -1,3 +1,4 @@
+
 .controls {
   border-radius: 6px;
   background-color: #1f1f1faa;
@@ -5,20 +6,21 @@
   color: white;
   padding: 1rem;
 
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow: scroll;
 
   position: absolute;
   bottom: 0.5rem;
-  left: 0.5rem;
+  top: 0.5rem;
   right: 0.5rem;
 
   font-family: monospace;
+  font-size: 16px;
 }
 
 .header {
-  grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -36,6 +38,8 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s;
+  margin-right: -4px;
+  margin-top: -4px;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -44,7 +48,7 @@
 
 .collapsedButton {
   position: absolute;
-  bottom: 0.5rem;
+  top: 0.5rem;
   right: 0.5rem;
   width: 40px;
   height: 40px;
@@ -132,8 +136,4 @@
   font-weight: bold;
   color: #8f8f8f;
   font-size: 0.875rem;
-}
-
-.controls label {
-  padding-left: 4px;
 }

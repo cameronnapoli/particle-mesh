@@ -1,8 +1,9 @@
 'use client';
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { gravitationalForce, elasticForce } from './forces';
+
 import { WithConfigProps, withConfig } from './config';
+import { gravitationalForce, elasticForce } from './forces';
 // import { useStats } from './useStats';
 
 const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
@@ -18,7 +19,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
     // initialize Three.js scene
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color(0xdddddd);
+    scene.background = new THREE.Color(0xf5f5f5);
 
     // create camera
     const camera = new THREE.OrthographicCamera(
@@ -61,7 +62,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
       anchors[arrayIndex + 1] = particlePosition.y;
       anchors[arrayIndex + 2] = particlePosition.z;
 
-      const color = new THREE.Color(0, 0, 0);
+      const color = new THREE.Color(0, 0, Math.random());
       colors[arrayIndex] = color.r;
       colors[arrayIndex + 1] = color.g;
       colors[arrayIndex + 2] = color.b;
@@ -117,8 +118,9 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
     }
 
     function onMouseMove(event: MouseEvent) {
-      mouse.x = (event.clientX / config.width) * 2 - 1;
-      mouse.y = -(event.clientY / config.height) * 2 + 1;
+      const rect = canvasElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / config.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / config.height) * 2 + 1;
     }
     window.addEventListener('mousemove', onMouseMove, false);
 

@@ -3,19 +3,16 @@ import * as THREE from 'three';
 
 import Controls from './Controls/Controls';
 
-const containerId = 'particle-mesh-container';
-
 type DotCount = 'few' | 'normal' | 'many'
 const dotCountToColumns = (value: DotCount) => {
   switch (value) {
-    case 'few':
-      return 20;
-    case 'normal':
-      return 80;
-    case 'many':
-      return 160;
+  case 'few':
+    return 20;
+  case 'normal':
+    return 80;
+  case 'many':
+    return 160;
   }
-  return 0;
 };
 
 interface Options {
@@ -30,7 +27,7 @@ interface Options {
 export const DEFAULT_OPTIONS: Options = {
   columns: 80,
   mouseGravityStrength: 6.0,
-  mouseGravityRadiusPx: 200.0,
+  mouseGravityRadiusPx: null,
   springConstant: 0.1,
   dampingConstant: 0.1,
   debug: false,
@@ -54,18 +51,13 @@ class Config {
   // misc
   debug: boolean;
 
-  constructor(options: Options) {
+  constructor(container: HTMLElement, options: Options) {
     this._cols = options.columns;
     this.mouseGravityStrength = options.mouseGravityStrength;
     this.mouseGravityRadiusPx = options.mouseGravityRadiusPx;
     this.springConstant = options.springConstant;
     this.dampingConstant = options.dampingConstant;
     this.debug = options.debug;
-
-    const container = document.getElementById(containerId);
-    if (!container) {
-      throw new Error('Cannot find container');
-    }
     this._width = container.clientWidth;
     this._height = container.clientHeight;
   }
@@ -109,8 +101,8 @@ class Config {
     const offsetY = (this._height) / this._rows * padding;
 
     const gridMidpoint = new THREE.Vector3(
-      (this._cols * offsetX) / 2,
-      (this._rows * offsetY) / 2,
+      (this._cols - 1) * offsetX / 2,
+      (this._rows - 1) * offsetY / 2,
       0,
     );
 
@@ -131,16 +123,31 @@ export function withConfig<P extends object>(
 ) {
   return function WithConfigComponent(props: P) {
     const options = useRef<Options>(DEFAULT_OPTIONS);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [config, setConfig] = useState<Config | null>(null);
 
+    const containerStyle: React.CSSProperties = {
+      width: '100%',
+      height: '500px',
+      overflow: 'hidden',
+      position: 'relative',
+      backgroundColor: '#f5f5f5',
+    };
+
     useEffect(() => {
-      setConfig(new Config(options.current));
+      if (containerRef.current) {
+        setConfig(new Config(containerRef.current, options.current));
+      }
     }, []);
 
     const rerender = useCallback(() => {
       setConfig(null);
       let timeout: NodeJS.Timeout | null = null;
-      timeout = setTimeout(() => setConfig(new Config(options.current)), 100);
+      timeout = setTimeout(() => {
+        if (containerRef.current) {
+          setConfig(new Config(containerRef.current, options.current));
+        }
+      }, 100);
       return () => {
         if (timeout) {
           clearTimeout(timeout);
@@ -154,7 +161,11 @@ export function withConfig<P extends object>(
       let timeout: NodeJS.Timeout | null = null;
       const handle = () => {
         setConfig(null);
-        timeout = setTimeout(() => setConfig(new Config(options.current)), 100);
+        timeout = setTimeout(() => {
+          if (containerRef.current) {
+            setConfig(new Config(containerRef.current, options.current));
+          }
+        }, 100);
       };
       window.addEventListener('resize', handle);
       return () => {
@@ -168,9 +179,8 @@ export function withConfig<P extends object>(
 
     return (
       <div
-        id={containerId}
-        // TODO: pass as props
-        style={{ width: '75vw', minHeight: '75vh', overflow: 'hidden', position: 'relative' }}
+        ref={containerRef}
+        style={containerStyle}
       >
         {config ? (
           <WrappedComponent {...props} config={config} />

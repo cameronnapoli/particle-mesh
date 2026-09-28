@@ -49,8 +49,8 @@ const RangeStep: React.FunctionComponent<Props> = ({
           className={styles.range}
         />
         <div className={styles.rangeLabels}>
-          {rangeLabels.map((label, index) => (
-            <span key={index}>{label}</span>
+          {rangeLabels.map((rangeLabel, index) => (
+            <span key={index}>{rangeLabel}</span>
           ))}
         </div>
       </div>
