@@ -3,7 +3,7 @@ import * as THREE from 'three';
 
 import Controls from './Controls/Controls';
 
-interface Options {
+interface ConfigOptions {
   columns: number;
   mouseGravityStrength: number;
   mouseGravityRadius: number | null;
@@ -13,7 +13,7 @@ interface Options {
   particleColor: (index: number) => THREE.ColorRepresentation;
 }
 
-const DEFAULT_OPTIONS: Options = {
+const DEFAULT_OPTIONS: ConfigOptions = {
   columns: 80,
   mouseGravityStrength: 6,
   mouseGravityRadius: null,
@@ -40,7 +40,7 @@ class Config {
   backgroundColor: THREE.ColorRepresentation;
   particleColor: (index: number) => THREE.ColorRepresentation;
 
-  constructor(container: HTMLElement, options: Options) {
+  constructor(container: HTMLElement, options: ConfigOptions) {
     this._cols = options.columns;
     this.mouseGravityStrength = options.mouseGravityStrength;
     this.mouseGravityRadius = options.mouseGravityRadius;
@@ -103,7 +103,7 @@ export function withConfig<P extends object>(
   WrappedComponent: React.ComponentType<P & WithConfigProps>,
 ) {
   return function WithConfigComponent(props: P) {
-    const options = useRef<Options>(DEFAULT_OPTIONS);
+    const options = useRef<ConfigOptions>(DEFAULT_OPTIONS);
     const containerRef = useRef<HTMLDivElement>(null);
     const [config, setConfig] = useState<Config | null>(null);
 
