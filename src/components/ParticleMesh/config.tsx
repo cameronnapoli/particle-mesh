@@ -23,36 +23,46 @@ const DEFAULT_CONFIG: Config = {
   particleColor: () => new THREE.Color(0, 0, Math.random()),
 };
 
-/** Returns the anchor position of particle `index` on a grid centered at the origin. */
-export function findParticlePosition(
-  index: number,
-  cols: number,
-  rows: number,
-  width: number,
-  height: number,
-): THREE.Vector3 {
-  const column = Math.floor(index / rows); // x
-  const row = index % rows; // y
+export type HydratedConfig = Config & {
+  width: number;
+  height: number;
+  cols: number;
+  rows: number;
+  count: number;
+  /** Anchor position of particle `index` on a grid centered at the origin. */
+  particlePosition: (index: number) => THREE.Vector3;
+};
+
+export function hydrateConfig(config: Config, width: number, height: number): HydratedConfig {
+  const cols = config.particleColumnCount;
+  const rows = Math.floor(cols / (width / height));
 
   const padding = 0.9;
-
   const offsetX = width / cols * padding;
   const offsetY = height / rows * padding;
 
-  return new THREE.Vector3(
-    (offsetX * column) - ((cols - 1) * offsetX / 2),
-    (offsetY * row) - ((rows - 1) * offsetY / 2),
-    0,
-  );
-}
+  return {
+    ...config,
+    width,
+    height,
+    cols,
+    rows,
+    count: rows * cols,
+    particlePosition: (index) => {
+      const column = Math.floor(index / rows); // x
+      const row = index % rows; // y
 
-export type WithConfigProps = Config & {
-  width: number;
-  height: number;
+      return new THREE.Vector3(
+        (offsetX * column) - ((cols - 1) * offsetX / 2),
+        (offsetY * row) - ((rows - 1) * offsetY / 2),
+        0,
+      );
+    },
+  };
 }
 
 export function withConfig<P extends object>(
-  WrappedComponent: React.ComponentType<P & WithConfigProps>,
+  WrappedComponent: React.ComponentType<P & HydratedConfig>,
 ) {
   return function WithConfigComponent(props: P) {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -88,9 +98,7 @@ export function withConfig<P extends object>(
         {size ? (
           <WrappedComponent
             {...props}
-            {...config}
-            width={size.width}
-            height={size.height}
+            {...hydrateConfig(config, size.width, size.height)}
           />
         ) : null}
         <Controls

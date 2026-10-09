@@ -2,10 +2,10 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-import { WithConfigProps, findParticlePosition, withConfig } from './config';
+import { HydratedConfig, withConfig } from './config';
 import { gravity, elasticity } from './forces';
 
-export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ width, height, ...config }) => {
+export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -13,9 +13,7 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ width, 
   useEffect(() => {
     if (!mountRef.current) return;
 
-    const cols = config.particleColumnCount;
-    const rows = Math.floor(cols / (width / height));
-    const count = rows * cols;
+    const { width, height } = config;
 
     // initialize Three.js scene
     const scene = new THREE.Scene();
@@ -44,13 +42,13 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ width, 
     mountContainer.appendChild(canvasElement);
 
     const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
-    const positions: Float32Array = new Float32Array(count * 3);
-    const anchors: Float32Array = new Float32Array(count * 3);
-    const velocities: Float32Array = new Float32Array(count * 3);
-    const colors: Float32Array = new Float32Array(count * 3);
+    const positions: Float32Array = new Float32Array(config.count * 3);
+    const anchors: Float32Array = new Float32Array(config.count * 3);
+    const velocities: Float32Array = new Float32Array(config.count * 3);
+    const colors: Float32Array = new Float32Array(config.count * 3);
 
-    for (let i = 0; i < count; i++) {
-      const particlePosition = findParticlePosition(i, cols, rows, width, height);
+    for (let i = 0; i < config.count; i++) {
+      const particlePosition = config.particlePosition(i);
       const arrayIndex = i * 3;
 
       positions[arrayIndex] = particlePosition.x;
@@ -100,7 +98,7 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ width, 
       raycaster.ray.at(camera.position.z, mouseIntersectPoint);
 
       // apply forces
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < config.count; i++) {
         const arrayIndex = i * 3;
 
         const anchorPosition = new THREE.Vector3(anchors[arrayIndex], anchors[arrayIndex + 1], anchors[arrayIndex + 2]);
@@ -135,7 +133,7 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ width, 
       }
 
       // update positions
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < config.count; i++) {
         const arrayIndex = i * 3;
         positionsArray[arrayIndex] += velocities[arrayIndex];
         positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1];
