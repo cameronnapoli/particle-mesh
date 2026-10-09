@@ -1,7 +1,7 @@
 import { SlidersHorizontal, XIcon } from 'lucide-react';
 import React, { useState } from 'react';
 
-import RangeStep from './RangeStep';
+import RangeStep from '../../RangeStep';
 import styles from './Controls.module.scss';
 
 const DOT_COUNTS = [20, 80, 160];
