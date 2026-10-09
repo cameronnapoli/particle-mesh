@@ -85,6 +85,8 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
       mousePosition.y = event.clientY - rect.top - height / 2;
     }
     window.addEventListener('mousemove', onMouseMove, false);
+    const onMouseLeave = () => mousePosition.set(9999999, 9999999, 0);
+    document.addEventListener('mouseleave', onMouseLeave);
 
     let debugCursor: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial> | null = null;
     if (config.debug) {
@@ -165,6 +167,7 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
       renderer.dispose();
       renderer.forceContextLoss();
       window.removeEventListener('mousemove', onMouseMove, false);
+      document.removeEventListener('mouseleave', onMouseLeave);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
