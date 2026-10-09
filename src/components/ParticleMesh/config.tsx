@@ -103,28 +103,6 @@ export function withConfig<P extends object>(
     const containerRef = useRef<HTMLDivElement>(null);
     const [config, setConfig] = useState<Config | null>(null);
 
-    const dotCountToColumns = (value: 'few' | 'normal' | 'many') => {
-      switch (value) {
-      case 'few':
-        return 20;
-      case 'normal':
-        return 80;
-      case 'many':
-        return 160;
-      }
-    };
-
-    const gravityStrengthToValue = (value: 'weak' | 'normal' | 'strong') => {
-      switch (value) {
-      case 'weak':
-        return 2;
-      case 'normal':
-        return 6;
-      case 'strong':
-        return 14;
-      }
-    };
-
     const containerStyle: React.CSSProperties = {
       width: '100%',
       height: '100%',
@@ -189,7 +167,8 @@ export function withConfig<P extends object>(
         <Controls
           onChangeDotCount={(value) => {
             if (options.current) {
-              options.current.columns = dotCountToColumns(value);
+              const map = { 'few': 20, 'normal': 80, 'many': 160 } as const
+              options.current.columns = map[value];
               rerender();
             }
           }}
@@ -201,7 +180,8 @@ export function withConfig<P extends object>(
           }}
           onChangeMouseGravityStrength={(value) => {
             if (options.current) {
-              options.current.mouseGravityStrength = gravityStrengthToValue(value);
+              const map = { 'weak': 2, 'normal': 6, 'strong': 14 } as const
+              options.current.mouseGravityStrength = map[value];
               rerender();
             }
           }}
