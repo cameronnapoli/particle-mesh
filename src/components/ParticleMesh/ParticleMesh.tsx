@@ -12,18 +12,16 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
   useEffect(() => {
     if (!mountRef.current) return;
 
-    const { width, height } = config;
-
     // initialize Three.js scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(config.backgroundColor);
 
     // create camera; 1 world unit = 1 CSS px
     const camera = new THREE.OrthographicCamera(
-      -width / 2,
-      width / 2,
-      -height / 2,
-      height / 2,
+      -config.width / 2,
+      config.width / 2,
+      -config.height / 2,
+      config.height / 2,
       1,
       100,
     );
@@ -34,7 +32,7 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
       powerPreference: 'high-performance',
     });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(width, height);
+    renderer.setSize(config.width, config.height);
     const mountContainer = mountRef.current;
     const canvasElement = renderer.domElement;
     mountContainer.appendChild(canvasElement);
@@ -82,8 +80,8 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
     const mousePosition: THREE.Vector3 = new THREE.Vector3(9999999, 9999999, 0);
     function onMouseMove(event: MouseEvent) {
       const rect = canvasElement.getBoundingClientRect();
-      mousePosition.x = event.clientX - rect.left - width / 2;
-      mousePosition.y = event.clientY - rect.top - height / 2;
+      mousePosition.x = event.clientX - rect.left - config.width / 2;
+      mousePosition.y = event.clientY - rect.top - config.height / 2;
     }
     window.addEventListener('mousemove', onMouseMove, false);
     const onMouseLeave = () => mousePosition.set(9999999, 9999999, 0);
