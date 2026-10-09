@@ -46,8 +46,7 @@ export function findParticlePosition(
   );
 }
 
-export type WithConfigProps = {
-  config: Config;
+export type WithConfigProps = Config & {
   width: number;
   height: number;
 }
@@ -87,7 +86,12 @@ export function withConfig<P extends object>(
         style={containerStyle}
       >
         {size ? (
-          <WrappedComponent {...props} config={options} width={size.width} height={size.height} />
+          <WrappedComponent
+            {...props}
+            {...options}
+            width={size.width}
+            height={size.height}
+          />
         ) : null}
         <Controls
           defaultColumns={options.particleColumnCount}

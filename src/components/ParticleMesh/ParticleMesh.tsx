@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { WithConfigProps, findParticlePosition, withConfig } from './config';
 import { gravity, elasticity } from './forces';
 
-export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config, width, height }) => {
+export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ width, height, ...config }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
