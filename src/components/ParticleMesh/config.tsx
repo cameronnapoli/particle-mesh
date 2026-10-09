@@ -11,6 +11,7 @@ export interface Config {
   anchorDampingConstant: number;
   backgroundColor: THREE.ColorRepresentation;
   particleColor: (index: number) => THREE.ColorRepresentation;
+  debug: boolean;
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -21,6 +22,7 @@ const DEFAULT_CONFIG: Config = {
   anchorDampingConstant: 0.1,
   backgroundColor: '#f0f0f0',
   particleColor: () => new THREE.Color(0, 0, Math.random()),
+  debug: false,
 };
 
 export type HydratedConfig = Omit<Config, 'particleColumnCount'> & {

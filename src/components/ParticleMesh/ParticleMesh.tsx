@@ -78,23 +78,27 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
     camera.position.set(0, 0, 8);
     camera.lookAt(0, 0, 0);
 
-    const mouse: THREE.Vector2 = new THREE.Vector2(9999999, 9999999);
-    const raycaster: THREE.Raycaster = new THREE.Raycaster();
-
+    const mousePosition: THREE.Vector3 = new THREE.Vector3(9999999, 9999999, 0);
     function onMouseMove(event: MouseEvent) {
       const rect = canvasElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / height) * 2 + 1;
+      mousePosition.x = event.clientX - rect.left - width / 2;
+      mousePosition.y = event.clientY - rect.top - height / 2;
     }
     window.addEventListener('mousemove', onMouseMove, false);
+
+    let debugCursor: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial> | null = null;
+    if (config.debug) {
+      debugCursor = new THREE.Mesh(
+        new THREE.CircleGeometry(6),
+        new THREE.MeshBasicMaterial({ color: 'red', side: THREE.DoubleSide }),
+      );
+      debugCursor.position.z = 1;
+      scene.add(debugCursor);
+    }
 
     // animation loop
     const animate = () => {
       const positionsArray = particles.attributes.position.array as Float32Array;
-
-      raycaster.setFromCamera(mouse, camera);
-      const mouseIntersectPoint: THREE.Vector3 = new THREE.Vector3();
-      raycaster.ray.at(camera.position.z, mouseIntersectPoint);
 
       // apply forces
       for (let i = 0; i < config.count; i++) {
@@ -111,7 +115,7 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
 
         // mouse gravity
         const gForce = gravity(
-          mouseIntersectPoint,
+          mousePosition,
           particlePosition,
           config.mouseGravityStrength,
           config.mouseGravityRadius,
@@ -141,6 +145,8 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
 
       particles.attributes.position.needsUpdate = true;
 
+      debugCursor?.position.set(mousePosition.x, mousePosition.y, 1);
+
       renderer.render(scene, camera);
 
       animationFrameRef.current = requestAnimationFrame(animate);
@@ -154,6 +160,8 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
       mountContainer.removeChild(canvasElement);
       particles.dispose();
       particleMaterial.dispose();
+      debugCursor?.geometry.dispose();
+      debugCursor?.material.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       window.removeEventListener('mousemove', onMouseMove, false);
