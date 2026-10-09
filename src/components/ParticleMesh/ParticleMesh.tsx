@@ -7,7 +7,6 @@ import { gravity, elasticity } from './forces';
 
 export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) => {
   const mountRef = useRef<HTMLDivElement>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -35,7 +34,6 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
       powerPreference: 'high-performance',
     });
     renderer.setSize(width, height);
-    rendererRef.current = renderer;
 
     const mountContainer = mountRef.current;
     const canvasElement = renderer.domElement;
@@ -153,9 +151,10 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
         cancelAnimationFrame(animationFrameRef.current);
       }
       mountContainer.removeChild(canvasElement);
-      if (rendererRef.current) {
-        rendererRef.current.dispose();
-      }
+      particles.dispose();
+      particleMaterial.dispose();
+      renderer.dispose();
+      renderer.forceContextLoss();
       window.removeEventListener('mousemove', onMouseMove, false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
