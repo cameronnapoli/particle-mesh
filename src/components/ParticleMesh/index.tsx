@@ -2,10 +2,10 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-import { WithConfigProps, withConfig } from './config';
+import { WithConfigProps, findParticlePosition, withConfig } from './config';
 import { gravity, elasticity } from './forces';
 
-export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
+export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config, width, height }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -13,16 +13,20 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config 
   useEffect(() => {
     if (!mountRef.current) return;
 
+    const cols = config.particleColumnCount;
+    const rows = Math.floor(cols / (width / height));
+    const count = rows * cols;
+
     // initialize Three.js scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(config.backgroundColor);
 
     // create camera; 1 world unit = 1 CSS px
     const camera = new THREE.OrthographicCamera(
-      -config.width / 2,
-      config.width / 2,
-      -config.height / 2,
-      config.height / 2,
+      -width / 2,
+      width / 2,
+      -height / 2,
+      height / 2,
       1,
       100,
     );
@@ -32,7 +36,7 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config 
       antialias: true,
       powerPreference: 'high-performance',
     });
-    renderer.setSize(config.width, config.height);
+    renderer.setSize(width, height);
     rendererRef.current = renderer;
 
     const mountContainer = mountRef.current;
@@ -40,13 +44,13 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config 
     mountContainer.appendChild(canvasElement);
 
     const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
-    const positions: Float32Array = new Float32Array(config.count * 3);
-    const anchors: Float32Array = new Float32Array(config.count * 3);
-    const velocities: Float32Array = new Float32Array(config.count * 3);
-    const colors: Float32Array = new Float32Array(config.count * 3);
+    const positions: Float32Array = new Float32Array(count * 3);
+    const anchors: Float32Array = new Float32Array(count * 3);
+    const velocities: Float32Array = new Float32Array(count * 3);
+    const colors: Float32Array = new Float32Array(count * 3);
 
-    for (let i = 0; i < config.count; i++) {
-      const particlePosition = config.findParticlePosition(i);
+    for (let i = 0; i < count; i++) {
+      const particlePosition = findParticlePosition(i, cols, rows, width, height);
       const arrayIndex = i * 3;
 
       positions[arrayIndex] = particlePosition.x;
@@ -82,8 +86,8 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config 
 
     function onMouseMove(event: MouseEvent) {
       const rect = canvasElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / config.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / config.height) * 2 + 1;
+      mouse.x = ((event.clientX - rect.left) / width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / height) * 2 + 1;
     }
     window.addEventListener('mousemove', onMouseMove, false);
 
@@ -96,7 +100,7 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config 
       raycaster.ray.at(camera.position.z, mouseIntersectPoint);
 
       // apply forces
-      for (let i = 0; i < config.count; i++) {
+      for (let i = 0; i < count; i++) {
         const arrayIndex = i * 3;
 
         const anchorPosition = new THREE.Vector3(anchors[arrayIndex], anchors[arrayIndex + 1], anchors[arrayIndex + 2]);
@@ -131,7 +135,7 @@ export const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config 
       }
 
       // update positions
-      for (let i = 0; i < config.count; i++) {
+      for (let i = 0; i < count; i++) {
         const arrayIndex = i * 3;
         positionsArray[arrayIndex] += velocities[arrayIndex];
         positionsArray[arrayIndex + 1] += velocities[arrayIndex + 1];
