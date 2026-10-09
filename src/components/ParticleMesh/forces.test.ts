@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import * as THREE from 'three';
-import { elasticity, G, gravity, EPSILON } from './forces';
+import { elasticity, gravity } from './forces';
+
+const G = 62000;
+const EPSILON = 200;
 
 const v = (x: number, y: number, z = 0) => new THREE.Vector3(x, y, z);
 const EPS2 = EPSILON * EPSILON;
