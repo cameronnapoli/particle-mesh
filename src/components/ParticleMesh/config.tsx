@@ -99,8 +99,8 @@ export function withConfig<P extends object>(
   WrappedComponent: React.ComponentType<P & WithConfigProps>,
 ) {
   return function WithConfigComponent(props: P) {
-    const [options, setOptions] = useState<ConfigOptions>(DEFAULT_OPTIONS);
     const containerRef = useRef<HTMLDivElement>(null);
+    const [options, setOptions] = useState<ConfigOptions>(DEFAULT_OPTIONS);
     const [config, setConfig] = useState<Config | null>(null);
 
     const containerStyle: React.CSSProperties = {
