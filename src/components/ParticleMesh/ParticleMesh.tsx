@@ -35,11 +35,11 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
     });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
-
     const mountContainer = mountRef.current;
     const canvasElement = renderer.domElement;
     mountContainer.appendChild(canvasElement);
 
+    // create particles
     const particles: THREE.BufferGeometry = new THREE.BufferGeometry();
     const positions: Float32Array = new Float32Array(config.count * 3);
     const anchors: Float32Array = new Float32Array(config.count * 3);
@@ -78,6 +78,7 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
     camera.position.set(0, 0, 8);
     camera.lookAt(0, 0, 0);
 
+    // add listeners
     const mousePosition: THREE.Vector3 = new THREE.Vector3(9999999, 9999999, 0);
     function onMouseMove(event: MouseEvent) {
       const rect = canvasElement.getBoundingClientRect();
@@ -88,6 +89,7 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
     const onMouseLeave = () => mousePosition.set(9999999, 9999999, 0);
     document.addEventListener('mouseleave', onMouseLeave);
 
+    // debug
     let debugCursor: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial> | null = null;
     if (config.debug) {
       debugCursor = new THREE.Mesh(
