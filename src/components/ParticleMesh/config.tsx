@@ -107,9 +107,11 @@ export function withConfig<P extends object>(
           defaultColumns={config.particleColumnCount}
           defaultMouseGravityRadius={config.mouseGravityRadius}
           defaultMouseGravityStrength={config.mouseGravityStrength}
+          defaultAnchorSpringConstant={config.anchorSpringConstant}
           onChangeDotCount={(particleColumnCount) => setConfig((o) => ({ ...o, particleColumnCount }))}
           onChangeMouseGravityRadius={(mouseGravityRadius) => setConfig((o) => ({ ...o, mouseGravityRadius }))}
           onChangeMouseGravityStrength={(mouseGravityStrength) => setConfig((o) => ({ ...o, mouseGravityStrength }))}
+          onChangeAnchorSpringConstant={(anchorSpringConstant) => setConfig((o) => ({ ...o, anchorSpringConstant }))}
         />
       </div>
     );
