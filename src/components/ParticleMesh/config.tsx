@@ -19,7 +19,7 @@ const DEFAULT_CONFIG: Config = {
   mouseGravityRadius: null,
   anchorSpringConstant: 0.1,
   anchorDampingConstant: 0.1,
-  backgroundColor: '#f5f5f5',
+  backgroundColor: '#f0f0f0',
   particleColor: () => new THREE.Color(0, 0, Math.random()),
 };
 
@@ -93,7 +93,7 @@ export function withConfig<P extends object>(
     return (
       <div
         ref={containerRef}
-        style={containerStyle}
+        style={{...containerStyle, backgroundColor: config.backgroundColor.toString()}}
       >
         {size ? (
           <WrappedComponent
@@ -118,6 +118,5 @@ const containerStyle: React.CSSProperties = {
   width: '100%',
   height: '100%',
   overflow: 'hidden',
-  borderRadius: '12px',
   position: 'relative',
 };
