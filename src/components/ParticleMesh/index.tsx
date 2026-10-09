@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 import { WithConfigProps, withConfig } from './config';
-import { gravitationalForce, elasticForce } from './forces';
+import { gravity, elasticity } from './forces';
 
 const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -103,7 +103,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
         const particlePosition = new THREE.Vector3(positionsArray[arrayIndex], positionsArray[arrayIndex + 1], positionsArray[arrayIndex + 2]);
 
         // mouse gravity
-        const gForce = gravitationalForce(
+        const gForce = gravity(
           mouseIntersectPoint,
           particlePosition,
           config.mouseGravityStrength,
@@ -119,7 +119,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
           velocities[arrayIndex + 1],
           velocities[arrayIndex + 2],
         );
-        const eForce = elasticForce(
+        const eForce = elasticity(
           anchorPosition,
           particlePosition,
           particleVelocity,

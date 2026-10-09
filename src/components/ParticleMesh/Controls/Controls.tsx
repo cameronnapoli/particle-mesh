@@ -9,7 +9,7 @@ import styles from './styles.module.scss';
 interface Props {
   onChangeDotCount: (value: 'few' | 'normal' | 'many') => void;
   onChangeMouseGravityRadius: (value: number | null) => void;
-  onChangeMouseGravityStrength: (value: number) => void;
+  onChangeMouseGravityStrength: (value: 'weak' | 'normal' | 'strong') => void;
 }
 
 const Controls: React.FunctionComponent<Props> = ({
@@ -78,11 +78,15 @@ const Controls: React.FunctionComponent<Props> = ({
       <RangeStep
         id="mouse-gravity-strength"
         label="Mouse Gravity Strength"
-        min={2.0}
-        max={20.0}
-        step={2.0}
-        defaultValue={DEFAULT_OPTIONS.mouseGravityStrength}
-        onChange={onChangeMouseGravityStrength}
+        min={0}
+        max={2}
+        step={1}
+        defaultValue={1}
+        onChange={(value) => {
+          const strengths: ('weak' | 'normal' | 'strong')[] = ['weak', 'normal', 'strong'];
+          onChangeMouseGravityStrength(strengths[value]);
+        }}
+        labels={['Weak', 'Normal', 'Strong']}
       />
     </div>
   );

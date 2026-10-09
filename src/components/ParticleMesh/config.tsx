@@ -15,6 +15,18 @@ const dotCountToColumns = (value: DotCount) => {
   }
 };
 
+type GravityStrength = 'weak' | 'normal' | 'strong'
+const gravityStrengthToValue = (value: GravityStrength) => {
+  switch (value) {
+  case 'weak':
+    return 20000;
+  case 'normal':
+    return 60000;
+  case 'strong':
+    return 140000;
+  }
+};
+
 interface Options {
   columns: number;
   mouseGravityStrength: number;
@@ -25,7 +37,7 @@ interface Options {
 
 export const DEFAULT_OPTIONS: Options = {
   columns: 80,
-  mouseGravityStrength: 6.0,
+  mouseGravityStrength: 60000,
   mouseGravityRadiusPx: null,
   springConstant: 0.1,
   dampingConstant: 0.1,
@@ -184,9 +196,9 @@ export function withConfig<P extends object>(
               rerender();
             }
           }}
-          onChangeMouseGravityStrength={(value) => {
+          onChangeMouseGravityStrength={(value: GravityStrength) => {
             if (options.current) {
-              options.current.mouseGravityStrength = value;
+              options.current.mouseGravityStrength = gravityStrengthToValue(value);
               rerender();
             }
           }}

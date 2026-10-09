@@ -1,28 +1,26 @@
 import * as THREE from 'three';
 
-export const gravitationalForce = (
+export const gravity = (
   mouse: THREE.Vector3,
   particle: THREE.Vector3,
-  mouseGravityStrength: number,
-  mouseGravityRadiusPx: number | null,
+  strength: number = 50000,
+  radiusPx: number | null,
 ): THREE.Vector3 => {
   let distance = particle.distanceTo(mouse);
 
-  if (mouseGravityRadiusPx !== null && distance > mouseGravityRadiusPx) {
+  // short circuit if outside radius
+  if (radiusPx !== null && distance > radiusPx) {
     return new THREE.Vector3(0, 0, 0);
   }
 
-  // our units are px, so this bumps up the grav strength
-  distance = distance / 100;
-
   // caps the magnitude by creating a min distance
-  distance = Math.max(distance, 2.0);
+  distance = Math.max(distance, 200);
 
   const direction = new THREE.Vector3()
     .subVectors(mouse, particle)
     .normalize();
 
-  const magnitude = mouseGravityStrength / (distance * distance);
+  const magnitude = strength / (distance * distance);
 
   return new THREE.Vector3(
     direction.x * magnitude,
@@ -31,7 +29,7 @@ export const gravitationalForce = (
   );
 };
 
-export const elasticForce = (
+export const elasticity = (
   anchor: THREE.Vector3,
   particlePosition: THREE.Vector3,
   particleVelocity: THREE.Vector3,
