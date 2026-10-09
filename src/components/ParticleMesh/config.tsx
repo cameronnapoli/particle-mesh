@@ -24,13 +24,14 @@ const DEFAULT_OPTIONS: ConfigOptions = {
 };
 
 class Config {
+  // canvas
+  private _width: number;
+  private _height: number;
+
   // particles
   private _cols: number;
-  private _count: number | null = null;
-
-  // canvas
-  private _width: number; // px
-  private _height: number; // px
+  private _rows: number;
+  private _count: number;
 
   // environment
   mouseGravityStrength: number;
@@ -41,7 +42,6 @@ class Config {
   particleColor: (index: number) => THREE.ColorRepresentation;
 
   constructor(container: HTMLElement, options: ConfigOptions) {
-    this._cols = options.columns;
     this.mouseGravityStrength = options.mouseGravityStrength;
     this.mouseGravityRadius = options.mouseGravityRadius;
     this.springConstant = options.springConstant;
@@ -50,17 +50,12 @@ class Config {
     this.particleColor = options.particleColor;
     this._width = container.clientWidth;
     this._height = container.clientHeight;
-  }
-
-  private get _rows() {
-    const aspect = this._width / this._height;
-    return Math.floor(this._cols / aspect);
+    this._cols = options.columns;
+    this._rows = Math.floor(this._cols / (this._width / this._height));
+    this._count = this._rows * this._cols
   }
 
   get count() {
-    if (this._count === null) {
-      this._count = this._rows * this._cols;
-    }
     return this._count;
   }
 
