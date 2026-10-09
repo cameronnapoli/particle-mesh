@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import * as THREE from 'three';
-import { elasticity, G, gravity, GRAV_SOFTENING_PX } from './forces';
+import { elasticity, G, gravity, EPSILON } from './forces';
 
 const v = (x: number, y: number, z = 0) => new THREE.Vector3(x, y, z);
-const EPS2 = GRAV_SOFTENING_PX * GRAV_SOFTENING_PX;
+const EPS2 = EPSILON * EPSILON;
 const plummer = (r: number, scale: number) => (scale * G * r) / Math.pow(r * r + EPS2, 1.5);
 
 describe('gravity', () => {
@@ -20,7 +20,7 @@ describe('gravity', () => {
   });
 
   it('peaks at r = ε/√2', () => {
-    const rPeak = GRAV_SOFTENING_PX / Math.SQRT2;
+    const rPeak = EPSILON / Math.SQRT2;
     const peak = gravity(v(rPeak, 0), v(0, 0), 4, null).length();
     expect(peak).toBeCloseTo(plummer(rPeak, 4));
     expect(gravity(v(rPeak * 0.9, 0), v(0, 0), 4, null).length()).toBeLessThan(peak);

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 /** Gravitational constant */
 export const G = 62000;
 /** Softening length (ε) */
-export const GRAV_SOFTENING_PX = 200;
+export const EPSILON = 200;
 
 /**
  * Pulls `body` toward `attractor` with Plummer-softened inverse-square magnitude.
@@ -35,7 +35,7 @@ export const gravity = (
   const m1 = 1.0;
   const m2 = 1.0;
   const magnitude = magnitudeCoefficient * G * ((m1 * m2 * distance)
-    / Math.pow(distance * distance + GRAV_SOFTENING_PX * GRAV_SOFTENING_PX, 1.5));
+    / Math.pow(distance * distance + EPSILON * EPSILON, 1.5));
 
   return direction.multiplyScalar(magnitude);
 };
