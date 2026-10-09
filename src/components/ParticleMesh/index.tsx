@@ -121,8 +121,8 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
           anchorPosition,
           particlePosition,
           particleVelocity,
-          config.springConstant,
-          config.dampingConstant,
+          config.anchorSpringConstant,
+          config.anchorDampingConstant,
         );
 
         velocities[arrayIndex] += gForce.x + eForce.x;

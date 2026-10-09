@@ -7,8 +7,8 @@ interface ConfigOptions {
   columns: number;
   mouseGravityStrength: number;
   mouseGravityRadius: number | null;
-  springConstant: number;
-  dampingConstant: number;
+  anchorSpringConstant: number;
+  anchorDampingConstant: number;
   backgroundColor: THREE.ColorRepresentation;
   particleColor: (index: number) => THREE.ColorRepresentation;
 }
@@ -17,8 +17,8 @@ const DEFAULT_OPTIONS: ConfigOptions = {
   columns: 80,
   mouseGravityStrength: 6,
   mouseGravityRadius: null,
-  springConstant: 0.1,
-  dampingConstant: 0.1,
+  anchorSpringConstant: 0.1,
+  anchorDampingConstant: 0.1,
   backgroundColor: '#f5f5f5',
   particleColor: () => new THREE.Color(0, 0, Math.random()),
 };
@@ -36,16 +36,16 @@ class Config {
   // environment
   mouseGravityStrength: number;
   mouseGravityRadius: number | null;
-  springConstant: number;
-  dampingConstant: number;
+  anchorSpringConstant: number;
+  anchorDampingConstant: number;
   backgroundColor: THREE.ColorRepresentation;
   particleColor: (index: number) => THREE.ColorRepresentation;
 
   constructor(container: HTMLElement, options: ConfigOptions) {
     this.mouseGravityStrength = options.mouseGravityStrength;
     this.mouseGravityRadius = options.mouseGravityRadius;
-    this.springConstant = options.springConstant;
-    this.dampingConstant = options.dampingConstant;
+    this.anchorSpringConstant = options.anchorSpringConstant;
+    this.anchorDampingConstant = options.anchorDampingConstant;
     this.backgroundColor = options.backgroundColor;
     this.particleColor = options.particleColor;
     this._width = container.clientWidth;
