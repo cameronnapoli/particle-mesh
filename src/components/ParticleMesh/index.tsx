@@ -17,7 +17,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf5f5f5);
 
-    // create camera
+    // create camera; 1 world unit = 1 CSS px
     const camera = new THREE.OrthographicCamera(
       -config.width / 2,
       config.width / 2,
@@ -113,7 +113,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
           mouseIntersectPoint,
           particlePosition,
           config.mouseGravityStrength,
-          config.mouseGravityRadiusPx,
+          config.mouseGravityRadius,
         );
 
         // anchor elasticity

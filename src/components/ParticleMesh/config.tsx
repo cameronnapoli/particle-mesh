@@ -30,7 +30,7 @@ const gravityStrengthToValue = (value: GravityStrength) => {
 interface Options {
   columns: number;
   mouseGravityStrength: number;
-  mouseGravityRadiusPx: number | null;
+  mouseGravityRadius: number | null;
   springConstant: number;
   dampingConstant: number;
 }
@@ -38,7 +38,7 @@ interface Options {
 export const DEFAULT_OPTIONS: Options = {
   columns: 80,
   mouseGravityStrength: 6,
-  mouseGravityRadiusPx: null,
+  mouseGravityRadius: null,
   springConstant: 0.1,
   dampingConstant: 0.1,
 };
@@ -54,14 +54,14 @@ class Config {
 
   // environment
   mouseGravityStrength: number;
-  mouseGravityRadiusPx: number | null;
+  mouseGravityRadius: number | null;
   springConstant: number;
   dampingConstant: number;
 
   constructor(container: HTMLElement, options: Options) {
     this._cols = options.columns;
     this.mouseGravityStrength = options.mouseGravityStrength;
-    this.mouseGravityRadiusPx = options.mouseGravityRadiusPx;
+    this.mouseGravityRadius = options.mouseGravityRadius;
     this.springConstant = options.springConstant;
     this.dampingConstant = options.dampingConstant;
     this._width = container.clientWidth;
@@ -192,7 +192,7 @@ export function withConfig<P extends object>(
           }}
           onChangeMouseGravityRadius={(value) => {
             if (options.current) {
-              options.current.mouseGravityRadiusPx = value;
+              options.current.mouseGravityRadius = value;
               rerender();
             }
           }}
