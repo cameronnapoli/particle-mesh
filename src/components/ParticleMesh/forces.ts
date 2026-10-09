@@ -37,11 +37,7 @@ export const gravity = (
   const magnitude = magnitudeCoefficient * G * ((m1 * m2 * distance)
     / Math.pow(distance * distance + GRAV_SOFTENING_PX * GRAV_SOFTENING_PX, 1.5));
 
-  return new THREE.Vector3(
-    direction.x * magnitude,
-    direction.y * magnitude,
-    direction.z * magnitude,
-  );
+  return direction.multiplyScalar(magnitude);
 };
 
 /**
