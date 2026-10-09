@@ -62,14 +62,8 @@ export const elasticity = (
   dampingConstant: number,
 ): THREE.Vector3 => {
   // F = -k * x - c * v
-  const displacement = bodyPosition
-    .clone()
-    .sub(anchorPosition);
-  const springForce = displacement
-    .multiplyScalar(-springConstant);
-  const dampingForce = bodyVelocity
-    .clone()
-    .multiplyScalar(-dampingConstant);
-  return springForce
-    .add(dampingForce);
+  return new THREE.Vector3()
+    .subVectors(bodyPosition, anchorPosition)
+    .multiplyScalar(-springConstant)
+    .addScaledVector(bodyVelocity, -dampingConstant);
 };
