@@ -134,6 +134,7 @@ export function withConfig<P extends object>(
       backgroundColor: new THREE.Color(options.current.backgroundColor).getStyle(),
     };
 
+    // init config
     useEffect(() => {
       if (containerRef.current) {
         setConfig(new Config(containerRef.current, options.current));
@@ -156,7 +157,7 @@ export function withConfig<P extends object>(
       };
     }, []);
 
-    // resize handler
+    // window resize handler
     useEffect(() => {
       let timeout: NodeJS.Timeout | null = null;
       const handle = () => {
