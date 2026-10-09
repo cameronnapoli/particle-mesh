@@ -1,4 +1,3 @@
-
 .controls {
   border-radius: 6px;
   background-color: #1f1f1faa;
@@ -27,7 +26,7 @@
   margin-bottom: 0.5rem;
 }
 
-.collapseButton {
+.closeButton {
   background: none;
   border: none;
   color: white;
@@ -46,7 +45,7 @@
   }
 }
 
-.collapsedButton {
+.expandButton {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
@@ -65,69 +64,4 @@
   &:hover {
     background-color: #1f1f1fdd;
   }
-}
-
-.controlGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.rangeContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.range {
-  width: 100%;
-  height: 6px;
-  border-radius: 3px;
-  background: #4f4f4f;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #8f8f8f;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background: #afafaf;
-    }
-  }
-
-  &::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #8f8f8f;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background: #afafaf;
-    }
-  }
-}
-
-.rangeLabels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: #afafaf;
-}
-
-.currentValue {
-  text-align: center;
-  font-weight: bold;
-  color: #8f8f8f;
-  font-size: 0.875rem;
 }

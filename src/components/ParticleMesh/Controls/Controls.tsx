@@ -2,7 +2,7 @@ import { CircleXIcon, SlidersHorizontal } from 'lucide-react';
 import React, { useState } from 'react';
 
 import RangeStep from './RangeStep';
-import styles from './styles.module.scss';
+import styles from './Controls.module.scss';
 
 const DOT_COUNTS = [20, 80, 160];
 const GRAVITY_STRENGTHS = [2, 6, 14];
@@ -28,13 +28,13 @@ const Controls: React.FunctionComponent<Props> = ({
 
   if (collapsed) {
     return (
-      <div
-        className={styles.collapsedButton}
+      <button
+        className={styles.expandButton}
         onClick={() => setCollapsed(false)}
         title="Expand controls"
       >
         <SlidersHorizontal size={20} />
-      </div>
+      </button>
     );
   }
 
@@ -43,7 +43,7 @@ const Controls: React.FunctionComponent<Props> = ({
       <div className={styles.header}>
         <div />
         <button
-          className={styles.collapseButton}
+          className={styles.closeButton}
           onClick={() => setCollapsed(true)}
           title="Collapse controls"
         >

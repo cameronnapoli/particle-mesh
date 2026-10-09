@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styles from './styles.module.scss';
+import styles from './RangeStep.module.scss';
 
 interface Props {
   id: string;
@@ -35,7 +35,7 @@ const RangeStep: React.FunctionComponent<Props> = ({
   );
 
   return (
-    <div className={styles.controlGroup}>
+    <div className={styles.root}>
       <label htmlFor={id}>{label}</label>
       <div className={styles.rangeContainer}>
         <input
@@ -46,9 +46,9 @@ const RangeStep: React.FunctionComponent<Props> = ({
           step={step}
           defaultValue={defaultValue}
           onChange={handleChange}
-          className={styles.range}
+          className={styles.input}
         />
-        <div className={styles.rangeLabels}>
+        <div className={styles.ticks}>
           {rangeLabels.map((rangeLabel, index) => (
             <span key={index}>{rangeLabel}</span>
           ))}
