@@ -102,6 +102,12 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
         const anchorPosition = new THREE.Vector3(anchors[arrayIndex], anchors[arrayIndex + 1], anchors[arrayIndex + 2]);
         const particlePosition = new THREE.Vector3(positionsArray[arrayIndex], positionsArray[arrayIndex + 1], positionsArray[arrayIndex + 2]);
 
+        const particleVelocity = new THREE.Vector3(
+          velocities[arrayIndex],
+          velocities[arrayIndex + 1],
+          velocities[arrayIndex + 2],
+        );
+
         // mouse gravity
         const gForce = gravity(
           mouseIntersectPoint,
@@ -109,16 +115,8 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
           config.mouseGravityStrength,
           config.mouseGravityRadiusPx,
         );
-        velocities[arrayIndex] += gForce.x;
-        velocities[arrayIndex + 1] += gForce.y;
-        velocities[arrayIndex + 2] += gForce.z;
 
         // anchor elasticity
-        const particleVelocity = new THREE.Vector3(
-          velocities[arrayIndex],
-          velocities[arrayIndex + 1],
-          velocities[arrayIndex + 2],
-        );
         const eForce = elasticity(
           anchorPosition,
           particlePosition,
@@ -126,9 +124,10 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
           config.springConstant,
           config.dampingConstant,
         );
-        velocities[arrayIndex] += eForce.x;
-        velocities[arrayIndex + 1] += eForce.y;
-        velocities[arrayIndex + 2] += eForce.z;
+
+        velocities[arrayIndex] += gForce.x + eForce.x;
+        velocities[arrayIndex + 1] += gForce.y + eForce.y;
+        velocities[arrayIndex + 2] += gForce.z + eForce.z;
       }
 
       // update positions
