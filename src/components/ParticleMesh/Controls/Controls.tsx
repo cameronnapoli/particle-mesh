@@ -4,13 +4,22 @@ import React, { useState } from 'react';
 import RangeStep from './RangeStep';
 import styles from './styles.module.scss';
 
+const DOT_COUNTS = [20, 80, 160];
+const GRAVITY_STRENGTHS = [2, 6, 14];
+
 interface Props {
-  onChangeDotCount: (value: 'few' | 'normal' | 'many') => void;
+  defaultColumns: number;
+  defaultMouseGravityRadius: number | null;
+  defaultMouseGravityStrength: number;
+  onChangeDotCount: (value: number) => void;
   onChangeMouseGravityRadius: (value: number | null) => void;
-  onChangeMouseGravityStrength: (value: 'weak' | 'normal' | 'strong') => void;
+  onChangeMouseGravityStrength: (value: number) => void;
 }
 
 const Controls: React.FunctionComponent<Props> = ({
+  defaultColumns,
+  defaultMouseGravityRadius,
+  defaultMouseGravityStrength,
   onChangeDotCount,
   onChangeMouseGravityRadius,
   onChangeMouseGravityStrength,
@@ -48,11 +57,8 @@ const Controls: React.FunctionComponent<Props> = ({
         min={0}
         max={2}
         step={1}
-        defaultValue={1}
-        onChange={(value) => {
-          const dotCounts: ('few' | 'normal' | 'many')[] = ['few', 'normal', 'many'];
-          onChangeDotCount(dotCounts[value]);
-        }}
+        defaultValue={DOT_COUNTS.indexOf(defaultColumns)}
+        onChange={(value) => onChangeDotCount(DOT_COUNTS[value])}
         labels={['Few', 'Normal', 'Many']}
       />
 
@@ -62,7 +68,7 @@ const Controls: React.FunctionComponent<Props> = ({
         min={50}
         max={250}
         step={50}
-        defaultValue={250}
+        defaultValue={defaultMouseGravityRadius ?? 250}
         onChange={(value) => {
           if (value === 250) {
             onChangeMouseGravityRadius(null);
@@ -79,11 +85,8 @@ const Controls: React.FunctionComponent<Props> = ({
         min={0}
         max={2}
         step={1}
-        defaultValue={1}
-        onChange={(value) => {
-          const strengths: ('weak' | 'normal' | 'strong')[] = ['weak', 'normal', 'strong'];
-          onChangeMouseGravityStrength(strengths[value]);
-        }}
+        defaultValue={GRAVITY_STRENGTHS.indexOf(defaultMouseGravityStrength)}
+        onChange={(value) => onChangeMouseGravityStrength(GRAVITY_STRENGTHS[value])}
         labels={['Weak', 'Normal', 'Strong']}
       />
     </div>

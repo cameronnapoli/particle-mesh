@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 import Controls from './Controls/Controls';
@@ -99,7 +99,7 @@ export function withConfig<P extends object>(
   WrappedComponent: React.ComponentType<P & WithConfigProps>,
 ) {
   return function WithConfigComponent(props: P) {
-    const options = useRef<ConfigOptions>(DEFAULT_OPTIONS);
+    const [options, setOptions] = useState<ConfigOptions>(DEFAULT_OPTIONS);
     const containerRef = useRef<HTMLDivElement>(null);
     const [config, setConfig] = useState<Config | null>(null);
 
@@ -109,52 +109,28 @@ export function withConfig<P extends object>(
       overflow: 'hidden',
       borderRadius: '12px',
       position: 'relative',
-      backgroundColor: new THREE.Color(options.current.backgroundColor).getStyle(),
+      backgroundColor: new THREE.Color(options.backgroundColor).getStyle(),
     };
 
-    // init config
+    // rebuild config on options change and window resize
     useEffect(() => {
-      if (containerRef.current) {
-        setConfig(new Config(containerRef.current, options.current));
-      }
-    }, []);
-
-    const rerender = useCallback(() => {
-      setConfig(null);
-      let timeout: NodeJS.Timeout | null = null;
-      timeout = setTimeout(() => {
-        if (containerRef.current) {
-          setConfig(new Config(containerRef.current, options.current));
-        }
-      }, 100);
-      return () => {
-        if (timeout) {
-          clearTimeout(timeout);
-          timeout = null;
-        }
-      };
-    }, []);
-
-    // window resize handler
-    useEffect(() => {
-      let timeout: NodeJS.Timeout | null = null;
-      const handle = () => {
+      let timeout: NodeJS.Timeout | undefined;
+      const rebuild = () => {
         setConfig(null);
+        clearTimeout(timeout);
         timeout = setTimeout(() => {
           if (containerRef.current) {
-            setConfig(new Config(containerRef.current, options.current));
+            setConfig(new Config(containerRef.current, options));
           }
         }, 100);
       };
-      window.addEventListener('resize', handle);
+      rebuild();
+      window.addEventListener('resize', rebuild);
       return () => {
-        window.removeEventListener('resize', handle);
-        if (timeout) {
-          clearTimeout(timeout);
-          timeout = null;
-        }
+        window.removeEventListener('resize', rebuild);
+        clearTimeout(timeout);
       };
-    }, []);
+    }, [options]);
 
     return (
       <div
@@ -165,26 +141,12 @@ export function withConfig<P extends object>(
           <WrappedComponent {...props} config={config} />
         ) : null}
         <Controls
-          onChangeDotCount={(value) => {
-            if (options.current) {
-              const map = { 'few': 20, 'normal': 80, 'many': 160 } as const
-              options.current.columns = map[value];
-              rerender();
-            }
-          }}
-          onChangeMouseGravityRadius={(value) => {
-            if (options.current) {
-              options.current.mouseGravityRadius = value;
-              rerender();
-            }
-          }}
-          onChangeMouseGravityStrength={(value) => {
-            if (options.current) {
-              const map = { 'weak': 2, 'normal': 6, 'strong': 14 } as const
-              options.current.mouseGravityStrength = map[value];
-              rerender();
-            }
-          }}
+          defaultColumns={options.columns}
+          defaultMouseGravityRadius={options.mouseGravityRadius}
+          defaultMouseGravityStrength={options.mouseGravityStrength}
+          onChangeDotCount={(columns) => setOptions((o) => ({ ...o, columns }))}
+          onChangeMouseGravityRadius={(mouseGravityRadius) => setOptions((o) => ({ ...o, mouseGravityRadius }))}
+          onChangeMouseGravityStrength={(mouseGravityStrength) => setOptions((o) => ({ ...o, mouseGravityStrength }))}
         />
       </div>
     );
