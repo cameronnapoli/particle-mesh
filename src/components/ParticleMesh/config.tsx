@@ -107,8 +107,7 @@ export function withConfig<P extends object>(
     const containerRef = useRef<HTMLDivElement>(null);
     const [config, setConfig] = useState<Config | null>(null);
 
-    type DotCount = 'few' | 'normal' | 'many'
-    const dotCountToColumns = (value: DotCount) => {
+    const dotCountToColumns = (value: 'few' | 'normal' | 'many') => {
       switch (value) {
       case 'few':
         return 20;
@@ -119,8 +118,7 @@ export function withConfig<P extends object>(
       }
     };
 
-    type GravityStrength = 'weak' | 'normal' | 'strong'
-    const gravityStrengthToValue = (value: GravityStrength) => {
+    const gravityStrengthToValue = (value: 'weak' | 'normal' | 'strong') => {
       switch (value) {
       case 'weak':
         return 2;
@@ -192,7 +190,7 @@ export function withConfig<P extends object>(
           <WrappedComponent {...props} config={config} />
         ) : null}
         <Controls
-          onChangeDotCount={(value: DotCount) => {
+          onChangeDotCount={(value) => {
             if (options.current) {
               options.current.columns = dotCountToColumns(value);
               rerender();
@@ -204,7 +202,7 @@ export function withConfig<P extends object>(
               rerender();
             }
           }}
-          onChangeMouseGravityStrength={(value: GravityStrength) => {
+          onChangeMouseGravityStrength={(value) => {
             if (options.current) {
               options.current.mouseGravityStrength = gravityStrengthToValue(value);
               rerender();
