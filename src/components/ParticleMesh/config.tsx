@@ -19,11 +19,11 @@ type GravityStrength = 'weak' | 'normal' | 'strong'
 const gravityStrengthToValue = (value: GravityStrength) => {
   switch (value) {
   case 'weak':
-    return 20000;
+    return 2;
   case 'normal':
-    return 60000;
+    return 6;
   case 'strong':
-    return 140000;
+    return 14;
   }
 };
 
@@ -37,7 +37,7 @@ interface Options {
 
 export const DEFAULT_OPTIONS: Options = {
   columns: 80,
-  mouseGravityStrength: 60000,
+  mouseGravityStrength: 6,
   mouseGravityRadiusPx: null,
   springConstant: 0.1,
   dampingConstant: 0.1,
