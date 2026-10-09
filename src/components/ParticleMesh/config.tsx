@@ -56,7 +56,7 @@ export function withConfig<P extends object>(
 ) {
   return function WithConfigComponent(props: P) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [options, setOptions] = useState<Config>(DEFAULT_CONFIG);
+    const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
     const [size, setSize] = useState<{ width: number; height: number } | null>(null);
 
     // rebuild config on options change and window resize
@@ -78,7 +78,7 @@ export function withConfig<P extends object>(
         window.removeEventListener('resize', rebuild);
         clearTimeout(timeout);
       };
-    }, [options]);
+    }, [config]);
 
     return (
       <div
@@ -88,18 +88,18 @@ export function withConfig<P extends object>(
         {size ? (
           <WrappedComponent
             {...props}
-            {...options}
+            {...config}
             width={size.width}
             height={size.height}
           />
         ) : null}
         <Controls
-          defaultColumns={options.particleColumnCount}
-          defaultMouseGravityRadius={options.mouseGravityRadius}
-          defaultMouseGravityStrength={options.mouseGravityStrength}
-          onChangeDotCount={(particleColumnCount) => setOptions((o) => ({ ...o, particleColumnCount }))}
-          onChangeMouseGravityRadius={(mouseGravityRadius) => setOptions((o) => ({ ...o, mouseGravityRadius }))}
-          onChangeMouseGravityStrength={(mouseGravityStrength) => setOptions((o) => ({ ...o, mouseGravityStrength }))}
+          defaultColumns={config.particleColumnCount}
+          defaultMouseGravityRadius={config.mouseGravityRadius}
+          defaultMouseGravityStrength={config.mouseGravityStrength}
+          onChangeDotCount={(particleColumnCount) => setConfig((o) => ({ ...o, particleColumnCount }))}
+          onChangeMouseGravityRadius={(mouseGravityRadius) => setConfig((o) => ({ ...o, mouseGravityRadius }))}
+          onChangeMouseGravityStrength={(mouseGravityStrength) => setConfig((o) => ({ ...o, mouseGravityStrength }))}
         />
       </div>
     );
