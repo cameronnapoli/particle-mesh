@@ -1,4 +1,8 @@
-$accent: #4d8dff;
+@use 'sass:color';
+
+$accent: color.adjust(#4d8dff, $saturation: -45%, $lightness: 12%);
+$text: #e6e8ee;
+$text-muted: #8a8f9c;
 
 .controls {
   width: 220px;
@@ -19,7 +23,7 @@ $accent: #4d8dff;
   background: linear-gradient(160deg, rgba(30, 32, 40, 0.82), rgba(14, 15, 20, 0.88));
   backdrop-filter: blur(12px) saturate(140%);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  color: #e6e8ee;
+  color: $text;
 
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
@@ -41,7 +45,7 @@ $accent: #4d8dff;
 .closeButton {
   background: none;
   border: none;
-  color: #8a8f9c;
+  color: $text-muted;
   cursor: pointer;
   padding: 2px;
   margin: -2px;
@@ -66,7 +70,7 @@ $accent: #4d8dff;
   background: rgba(20, 22, 28, 0.82);
   backdrop-filter: blur(12px);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-  color: #e6e8ee;
+  color: $text;
   cursor: pointer;
   display: flex;
   align-items: center;

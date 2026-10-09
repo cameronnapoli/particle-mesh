@@ -1,4 +1,8 @@
-$accent: #4d8dff;
+@use 'sass:color';
+
+$accent: color.adjust(#4d8dff, $saturation: -45%, $lightness: 12%);
+$label: #a3a8b5;
+$tick: #6b7080;
 
 @mixin thumb {
   width: 12px;
@@ -20,7 +24,7 @@ $accent: #4d8dff;
     font-size: 10px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #a3a8b5;
+    color: $label;
   }
 }
 
@@ -63,5 +67,5 @@ $accent: #4d8dff;
   display: flex;
   justify-content: space-between;
   font-size: 9px;
-  color: #6b7080;
+  color: $tick;
 }
