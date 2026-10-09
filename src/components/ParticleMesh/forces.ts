@@ -17,7 +17,7 @@ export const GRAV_SOFTENING_PX = 200;
 export const gravity = (
   attractorPosition: THREE.Vector3,
   bodyPosition: THREE.Vector3,
-  scale: number = 5,
+  scale: number,
   radiusPx: number | null,
 ): THREE.Vector3 => {
   const distance = bodyPosition.distanceTo(attractorPosition);

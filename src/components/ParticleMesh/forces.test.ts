@@ -32,11 +32,6 @@ describe('gravity', () => {
     const force = gravity(v(250, 0), v(0, 0), 5, 250);
     expect(force.length()).toBeGreaterThan(0);
   });
-
-  it('uses the default scale when undefined is passed', () => {
-    const force = gravity(v(400, 0), v(0, 0), undefined, null);
-    expect(force.x).toBeCloseTo((G * 5) / (400 * 400 + EPS2));
-  });
 });
 
 describe('elasticity', () => {
