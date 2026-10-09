@@ -3,30 +3,6 @@ import * as THREE from 'three';
 
 import Controls from './Controls/Controls';
 
-type DotCount = 'few' | 'normal' | 'many'
-const dotCountToColumns = (value: DotCount) => {
-  switch (value) {
-  case 'few':
-    return 20;
-  case 'normal':
-    return 80;
-  case 'many':
-    return 160;
-  }
-};
-
-type GravityStrength = 'weak' | 'normal' | 'strong'
-const gravityStrengthToValue = (value: GravityStrength) => {
-  switch (value) {
-  case 'weak':
-    return 2;
-  case 'normal':
-    return 6;
-  case 'strong':
-    return 14;
-  }
-};
-
 interface Options {
   columns: number;
   mouseGravityStrength: number;
@@ -37,7 +13,7 @@ interface Options {
   particleColor: (index: number) => THREE.ColorRepresentation;
 }
 
-export const DEFAULT_OPTIONS: Options = {
+const DEFAULT_OPTIONS: Options = {
   columns: 80,
   mouseGravityStrength: 6,
   mouseGravityRadius: null,
@@ -130,6 +106,30 @@ export function withConfig<P extends object>(
     const options = useRef<Options>(DEFAULT_OPTIONS);
     const containerRef = useRef<HTMLDivElement>(null);
     const [config, setConfig] = useState<Config | null>(null);
+
+    type DotCount = 'few' | 'normal' | 'many'
+    const dotCountToColumns = (value: DotCount) => {
+      switch (value) {
+      case 'few':
+        return 20;
+      case 'normal':
+        return 80;
+      case 'many':
+        return 160;
+      }
+    };
+
+    type GravityStrength = 'weak' | 'normal' | 'strong'
+    const gravityStrengthToValue = (value: GravityStrength) => {
+      switch (value) {
+      case 'weak':
+        return 2;
+      case 'normal':
+        return 6;
+      case 'strong':
+        return 14;
+      }
+    };
 
     const containerStyle: React.CSSProperties = {
       width: '100%',

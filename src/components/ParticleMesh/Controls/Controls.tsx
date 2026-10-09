@@ -1,8 +1,6 @@
 import { CircleXIcon, SlidersHorizontal } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { DEFAULT_OPTIONS } from '../config';
-
 import RangeStep from './RangeStep';
 import styles from './styles.module.scss';
 
@@ -64,7 +62,7 @@ const Controls: React.FunctionComponent<Props> = ({
         min={50}
         max={250}
         step={50}
-        defaultValue={DEFAULT_OPTIONS.mouseGravityRadius ?? 250}
+        defaultValue={250}
         onChange={(value) => {
           if (value === 250) {
             onChangeMouseGravityRadius(null);
