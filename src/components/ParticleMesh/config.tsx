@@ -103,15 +103,6 @@ export function withConfig<P extends object>(
     const [options, setOptions] = useState<ConfigOptions>(DEFAULT_OPTIONS);
     const [config, setConfig] = useState<Config | null>(null);
 
-    const containerStyle: React.CSSProperties = {
-      width: '100%',
-      height: '100%',
-      overflow: 'hidden',
-      borderRadius: '12px',
-      position: 'relative',
-      backgroundColor: new THREE.Color(options.backgroundColor).getStyle(),
-    };
-
     // rebuild config on options change and window resize
     useEffect(() => {
       let timeout: NodeJS.Timeout | undefined;
@@ -152,3 +143,11 @@ export function withConfig<P extends object>(
     );
   };
 }
+
+const containerStyle: React.CSSProperties = {
+  width: '100%',
+  height: '100%',
+  overflow: 'hidden',
+  borderRadius: '12px',
+  position: 'relative',
+};
