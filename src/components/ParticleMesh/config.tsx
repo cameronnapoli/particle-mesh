@@ -67,7 +67,8 @@ class Config {
     return this._height;
   }
 
-  findParticlePosition(index: number) {
+  /** Returns the anchor position of particle `index` on a grid centered at the origin. */
+  findParticlePosition(index: number): THREE.Vector3 {
     const column = Math.floor(index / this._rows); // x
     const row = index % this._rows; // y
 
