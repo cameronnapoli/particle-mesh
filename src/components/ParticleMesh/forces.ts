@@ -1,23 +1,23 @@
 import * as THREE from 'three';
 
 /** Gravitational constant */
-export const G = 10000;
+export const G = 62000;
 /** Softening length (ε) */
 export const GRAV_SOFTENING_PX = 200;
 
 /**
- * Pulls `body` toward `attractor` with softened inverse-square magnitude.
+ * Pulls `body` toward `attractor` with Plummer-softened inverse-square magnitude.
  *
  * @param attractorPosition Attractor position
  * @param bodyPosition Body position
- * @param scale Coefficient force multiplier
+ * @param magnitudeCoefficient Coefficient force multiplier
  * @param radiusPx Radius outside of which gravity will not apply, or `null` for unlimited range
  * @returns Force vector acting on `body`
  */
 export const gravity = (
   attractorPosition: THREE.Vector3,
   bodyPosition: THREE.Vector3,
-  scale: number,
+  magnitudeCoefficient: number,
   radiusPx: number | null,
 ): THREE.Vector3 => {
   const distance = bodyPosition.distanceTo(attractorPosition);
@@ -31,10 +31,11 @@ export const gravity = (
     .subVectors(attractorPosition, bodyPosition)
     .normalize();
 
-  // F = G * ((m1 * m2) / (r^2 + ε^2))
+  // F = G * m1 * m2 * r / (r^2 + ε^2)^(3/2)
   const m1 = 1.0;
   const m2 = 1.0;
-  const magnitude = scale * G * ((m1 * m2) / (distance * distance + GRAV_SOFTENING_PX * GRAV_SOFTENING_PX));
+  const magnitude = magnitudeCoefficient * G * ((m1 * m2 * distance)
+    / Math.pow(distance * distance + GRAV_SOFTENING_PX * GRAV_SOFTENING_PX, 1.5));
 
   return new THREE.Vector3(
     direction.x * magnitude,

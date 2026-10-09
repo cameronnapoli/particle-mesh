@@ -4,18 +4,27 @@ import { elasticity, G, gravity, GRAV_SOFTENING_PX } from './forces';
 
 const v = (x: number, y: number, z = 0) => new THREE.Vector3(x, y, z);
 const EPS2 = GRAV_SOFTENING_PX * GRAV_SOFTENING_PX;
+const plummer = (r: number, scale: number) => (scale * G * r) / Math.pow(r * r + EPS2, 1.5);
 
 describe('gravity', () => {
-  it('pulls the particle toward the mouse with softened inverse-square magnitude', () => {
+  it('pulls the particle toward the mouse with Plummer-softened magnitude', () => {
     const force = gravity(v(400, 0), v(0, 0), 16, null);
-    expect(force.x).toBeCloseTo((G * 16) / (400 * 400 + EPS2));
+    expect(force.x).toBeCloseTo(plummer(400, 16));
     expect(force.y).toBeCloseTo(0);
     expect(force.z).toBeCloseTo(0);
   });
 
-  it('stays finite near the attractor, peaking at scale * G / ε^2', () => {
+  it('tapers to zero approaching the attractor', () => {
     const force = gravity(v(0.001, 0), v(0, 0), 4, null);
-    expect(force.length()).toBeCloseTo((G * 4) / EPS2);
+    expect(force.length()).toBeCloseTo(0);
+  });
+
+  it('peaks at r = ε/√2', () => {
+    const rPeak = GRAV_SOFTENING_PX / Math.SQRT2;
+    const peak = gravity(v(rPeak, 0), v(0, 0), 4, null).length();
+    expect(peak).toBeCloseTo(plummer(rPeak, 4));
+    expect(gravity(v(rPeak * 0.9, 0), v(0, 0), 4, null).length()).toBeLessThan(peak);
+    expect(gravity(v(rPeak * 1.1, 0), v(0, 0), 4, null).length()).toBeLessThan(peak);
   });
 
   it('returns zero when the mouse is on the particle', () => {
