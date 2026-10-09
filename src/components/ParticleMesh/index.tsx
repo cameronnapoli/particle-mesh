@@ -15,7 +15,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
 
     // initialize Three.js scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf5f5f5);
+    scene.background = new THREE.Color(config.backgroundColor);
 
     // create camera; 1 world unit = 1 CSS px
     const camera = new THREE.OrthographicCamera(
@@ -57,7 +57,7 @@ const ParticleMesh: React.FunctionComponent<WithConfigProps> = ({ config }) => {
       anchors[arrayIndex + 1] = particlePosition.y;
       anchors[arrayIndex + 2] = particlePosition.z;
 
-      const color = new THREE.Color(0, 0, Math.random());
+      const color = new THREE.Color(config.particleColor(i));
       colors[arrayIndex] = color.r;
       colors[arrayIndex + 1] = color.g;
       colors[arrayIndex + 2] = color.b;

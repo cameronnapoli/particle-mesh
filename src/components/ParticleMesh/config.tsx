@@ -33,6 +33,8 @@ interface Options {
   mouseGravityRadius: number | null;
   springConstant: number;
   dampingConstant: number;
+  backgroundColor: THREE.ColorRepresentation;
+  particleColor: (index: number) => THREE.ColorRepresentation;
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -41,6 +43,8 @@ export const DEFAULT_OPTIONS: Options = {
   mouseGravityRadius: null,
   springConstant: 0.1,
   dampingConstant: 0.1,
+  backgroundColor: '#f5f5f5',
+  particleColor: () => new THREE.Color(0, 0, Math.random()),
 };
 
 class Config {
@@ -57,6 +61,8 @@ class Config {
   mouseGravityRadius: number | null;
   springConstant: number;
   dampingConstant: number;
+  backgroundColor: THREE.ColorRepresentation;
+  particleColor: (index: number) => THREE.ColorRepresentation;
 
   constructor(container: HTMLElement, options: Options) {
     this._cols = options.columns;
@@ -64,6 +70,8 @@ class Config {
     this.mouseGravityRadius = options.mouseGravityRadius;
     this.springConstant = options.springConstant;
     this.dampingConstant = options.dampingConstant;
+    this.backgroundColor = options.backgroundColor;
+    this.particleColor = options.particleColor;
     this._width = container.clientWidth;
     this._height = container.clientHeight;
   }
@@ -129,7 +137,7 @@ export function withConfig<P extends object>(
       overflow: 'hidden',
       borderRadius: '12px',
       position: 'relative',
-      backgroundColor: '#f5f5f5',
+      backgroundColor: new THREE.Color(options.current.backgroundColor).getStyle(),
     };
 
     useEffect(() => {
