@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 
 export const gravity = (
-  mouse: THREE.Vector3,
-  particle: THREE.Vector3,
+  attractor: THREE.Vector3,
+  body: THREE.Vector3,
   strength: number = 50000,
   radiusPx: number | null,
 ): THREE.Vector3 => {
-  let distance = particle.distanceTo(mouse);
+  let distance = body.distanceTo(attractor);
 
   // short circuit if outside radius
   if (radiusPx !== null && distance > radiusPx) {
@@ -17,7 +17,7 @@ export const gravity = (
   distance = Math.max(distance, 200);
 
   const direction = new THREE.Vector3()
-    .subVectors(mouse, particle)
+    .subVectors(attractor, body)
     .normalize();
 
   const magnitude = strength / (distance * distance);
