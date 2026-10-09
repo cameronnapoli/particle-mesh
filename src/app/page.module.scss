@@ -1,7 +1,6 @@
 .main {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  padding: 0;
+  padding: 4rem; // set padding for testing mouse coordinate mapping
   height: 100svh;
 }
