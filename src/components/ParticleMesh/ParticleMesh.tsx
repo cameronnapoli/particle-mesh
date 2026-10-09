@@ -177,4 +177,4 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
   );
 };
 
-export const ParticleMeshWithConfig = withConfig(ParticleMesh)
+export const ParticleMeshWithConfig = withConfig(ParticleMesh);
