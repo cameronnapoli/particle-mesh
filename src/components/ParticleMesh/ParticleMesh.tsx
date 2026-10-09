@@ -33,6 +33,7 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
       antialias: true,
       powerPreference: 'high-performance',
     });
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
 
     const mountContainer = mountRef.current;
