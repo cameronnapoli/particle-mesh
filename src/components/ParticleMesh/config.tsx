@@ -23,7 +23,7 @@ const DEFAULT_CONFIG: Config = {
   particleColor: () => new THREE.Color(0, 0, Math.random()),
 };
 
-export type HydratedConfig = Config & {
+export type HydratedConfig = Omit<Config, 'particleColumnCount'> & {
   width: number;
   height: number;
   cols: number;
