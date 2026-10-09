@@ -6,19 +6,19 @@ import * as THREE from 'three';
  * @param attractorPosition Attractor position
  * @param bodyPosition Body position
  * @param magnitudeCoefficient Coefficient force multiplier
- * @param radiusPx Radius outside of which gravity will not apply, or `null` for unlimited range
+ * @param radius Radius outside of which gravity will not apply, or `null` for unlimited range
  * @returns Force vector acting on `body`
  */
 export const gravity = (
   attractorPosition: THREE.Vector3,
   bodyPosition: THREE.Vector3,
   magnitudeCoefficient: number,
-  radiusPx: number | null,
+  radius: number | null,
 ): THREE.Vector3 => {
   const distance = bodyPosition.distanceTo(attractorPosition);
 
   // short circuit if outside radius
-  if (radiusPx !== null && distance > radiusPx) {
+  if (radius !== null && distance > radius) {
     return new THREE.Vector3(0, 0, 0);
   }
 
