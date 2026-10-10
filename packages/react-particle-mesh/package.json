@@ -1,6 +1,6 @@
 {
   "name": "react-particle-mesh",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An interactive Three.js particle grid for React. Particles are held in place by damped springs and pulled toward the cursor.",
   "keywords": ["react", "three", "threejs", "particles", "mesh", "animation", "webgl", "background"],
   "license": "MIT",
