@@ -1,14 +1,20 @@
 {
   "name": "react-particle-mesh-monorepo",
   "private": true,
+  "packageManager": "bun@1.2.10",
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
   "scripts": {
     "dev": "bun run --filter react-particle-mesh build && bun run --filter '*' dev",
-    "build": "bun run --filter '*' build",
+    "build": "bun run --filter react-particle-mesh build && bun run --filter demo build",
     "lint": "bun run --filter '*' lint",
-    "test": "bun run --filter '*' test"
+    "test": "bun run --filter '*' test",
+    "changeset": "changeset",
+    "release": "bun run --filter react-particle-mesh build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "3.0.3"
   }
 }
