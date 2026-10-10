@@ -13,6 +13,7 @@ export interface Config {
   anchorDampingConstant: number;
   backgroundColor: Color;
   particleColor: (index: number) => Color;
+  interactive: boolean;
   debug: boolean;
 }
 
@@ -25,6 +26,7 @@ export const DEFAULT_CONFIG: Config = {
   anchorDampingConstant: 0.1,
   backgroundColor: '#f0f0f0',
   particleColor: () => new THREE.Color(0, 0, Math.random()).getHex(),
+  interactive: true,
   debug: false,
 };
 

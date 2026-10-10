@@ -109,6 +109,8 @@ const ParticleMeshCanvas: React.FunctionComponent<HydratedConfig> = (config) => 
       scene.add(debugCursor);
     }
 
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
     // scratch vectors reused every frame
     const anchorPosition = new THREE.Vector3();
     const particlePosition = new THREE.Vector3();
@@ -128,6 +130,7 @@ const ParticleMeshCanvas: React.FunctionComponent<HydratedConfig> = (config) => 
         }
       }
       particleMaterial.size = live.particleSize;
+      const attracting = live.interactive && !reducedMotion.matches;
 
       // apply forces
       for (let i = 0; i < config.count; i++) {
@@ -138,13 +141,17 @@ const ParticleMeshCanvas: React.FunctionComponent<HydratedConfig> = (config) => 
         particleVelocity.fromArray(velocities, arrayIndex);
 
         // mouse gravity
-        gravity(
-          mousePosition,
-          particlePosition,
-          live.mouseGravityStrength,
-          live.mouseGravityRadius,
-          gForce,
-        );
+        if (attracting) {
+          gravity(
+            mousePosition,
+            particlePosition,
+            live.mouseGravityStrength,
+            live.mouseGravityRadius,
+            gForce,
+          );
+        } else {
+          gForce.set(0, 0, 0);
+        }
 
         // anchor elasticity
         elasticity(
@@ -177,11 +184,23 @@ const ParticleMeshCanvas: React.FunctionComponent<HydratedConfig> = (config) => 
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
-    animate();
+
+    // only animate while on screen
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && animationFrameRef.current === null) {
+        animate();
+      } else if (!entry.isIntersecting && animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    });
+    visibilityObserver.observe(canvasElement);
 
     return () => {
-      if (animationFrameRef.current) {
+      visibilityObserver.disconnect();
+      if (animationFrameRef.current !== null) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
       mountContainer.removeChild(canvasElement);
       particles.dispose();
