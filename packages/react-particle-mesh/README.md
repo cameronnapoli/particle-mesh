@@ -4,6 +4,8 @@
 
 An interactive Three.js particle grid for React. Each particle is held in place by a damped spring and pulled toward the cursor.
 
+![Screenshot of particle mesh simulation](https://raw.githubusercontent.com/cameronnapoli/particle-mesh/main/examples/screenshot.jpg)
+
 ## Install
 
 ```sh
