@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
-import Controls from './Controls/Controls';
-
 export interface Config {
   particleColumnCount: number;
   mouseGravityStrength: number;
@@ -14,7 +12,7 @@ export interface Config {
   debug: boolean;
 }
 
-const DEFAULT_CONFIG: Config = {
+export const DEFAULT_CONFIG: Config = {
   particleColumnCount: 80,
   mouseGravityStrength: 6,
   mouseGravityRadius: null,
@@ -63,17 +61,17 @@ export function hydrateConfig(config: Config, width: number, height: number): Hy
   };
 }
 
-export function withConfig<P extends object>(
-  WrappedComponent: React.ComponentType<P & HydratedConfig>,
-) {
-  return function WithConfigComponent(props: P) {
+export type ParticleMeshProps = Partial<Config>;
+
+export function withConfig(WrappedComponent: React.ComponentType<HydratedConfig>) {
+  return function WithConfigComponent(props: ParticleMeshProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
+    const config: Config = { ...DEFAULT_CONFIG, ...props };
     const [size, setSize] = useState<{ width: number; height: number } | null>(null);
 
-    // rebuild config on options change and window resize
+    // rebuild on options change and window resize
     useEffect(() => {
-      let timeout: NodeJS.Timeout | undefined;
+      let timeout: ReturnType<typeof setTimeout> | undefined;
       const rebuild = () => {
         setSize(null);
         clearTimeout(timeout);
@@ -90,7 +88,16 @@ export function withConfig<P extends object>(
         window.removeEventListener('resize', rebuild);
         clearTimeout(timeout);
       };
-    }, [config]);
+    // particleColor excluded: an inline function would rebuild on every render
+    }, [
+      config.particleColumnCount,
+      config.mouseGravityStrength,
+      config.mouseGravityRadius,
+      config.anchorSpringConstant,
+      config.anchorDampingConstant,
+      config.backgroundColor,
+      config.debug,
+    ]);
 
     return (
       <div
@@ -98,21 +105,8 @@ export function withConfig<P extends object>(
         style={{...containerStyle, backgroundColor: config.backgroundColor.toString()}}
       >
         {size ? (
-          <WrappedComponent
-            {...props}
-            {...hydrateConfig(config, size.width, size.height)}
-          />
+          <WrappedComponent {...hydrateConfig(config, size.width, size.height)} />
         ) : null}
-        <Controls
-          defaultColumns={config.particleColumnCount}
-          defaultMouseGravityRadius={config.mouseGravityRadius}
-          defaultMouseGravityStrength={config.mouseGravityStrength}
-          defaultAnchorSpringConstant={config.anchorSpringConstant}
-          onChangeDotCount={(particleColumnCount) => setConfig((o) => ({ ...o, particleColumnCount }))}
-          onChangeMouseGravityRadius={(mouseGravityRadius) => setConfig((o) => ({ ...o, mouseGravityRadius }))}
-          onChangeMouseGravityStrength={(mouseGravityStrength) => setConfig((o) => ({ ...o, mouseGravityStrength }))}
-          onChangeAnchorSpringConstant={(anchorSpringConstant) => setConfig((o) => ({ ...o, anchorSpringConstant }))}
-        />
       </div>
     );
   };

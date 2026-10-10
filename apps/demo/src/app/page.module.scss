@@ -4,3 +4,8 @@
   padding: 4rem; // set padding for testing mouse coordinate mapping
   height: 100svh;
 }
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
