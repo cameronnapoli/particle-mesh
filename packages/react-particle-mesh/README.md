@@ -1,5 +1,7 @@
 # react-particle-mesh
 
+[![npm](https://img.shields.io/npm/v/react-particle-mesh)](https://www.npmjs.com/package/react-particle-mesh)
+
 An interactive Three.js particle grid for React. Each particle is held in place by a damped spring and pulled toward the cursor.
 
 ![Screenshot of particle mesh simulation](https://raw.githubusercontent.com/cameronnapoli/particle-mesh/main/screenshot.png)
