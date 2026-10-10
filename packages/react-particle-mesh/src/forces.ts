@@ -7,6 +7,7 @@ import * as THREE from 'three';
  * @param bodyPosition Body position
  * @param magnitudeCoefficient Coefficient force multiplier
  * @param radius Radius outside of which gravity will not apply, or `null` for unlimited range
+ * @param target Vector to write the result into
  * @returns Force vector acting on `body`
  */
 export const gravity = (
@@ -14,15 +15,16 @@ export const gravity = (
   bodyPosition: THREE.Vector3,
   magnitudeCoefficient: number,
   radius: number | null,
+  target = new THREE.Vector3(),
 ): THREE.Vector3 => {
   const distance = bodyPosition.distanceTo(attractorPosition);
 
   // short circuit if outside radius
   if (radius !== null && distance > radius) {
-    return new THREE.Vector3(0, 0, 0);
+    return target.set(0, 0, 0);
   }
 
-  const direction = new THREE.Vector3()
+  const direction = target
     .subVectors(attractorPosition, bodyPosition)
     .normalize();
 
@@ -45,6 +47,7 @@ export const gravity = (
  * @param bodyVelocity Body velocity
  * @param springConstant Stiffness (k)
  * @param dampingConstant Damping coefficient (c)
+ * @param target Vector to write the result into
  * @returns Force vector acting on `body`
  */
 export const elasticity = (
@@ -53,9 +56,10 @@ export const elasticity = (
   bodyVelocity: THREE.Vector3,
   springConstant: number,
   dampingConstant: number,
+  target = new THREE.Vector3(),
 ): THREE.Vector3 => {
   // F = -k * x - c * v
-  return new THREE.Vector3()
+  return target
     .subVectors(bodyPosition, anchorPosition)
     .multiplyScalar(-springConstant)
     .addScaledVector(bodyVelocity, -dampingConstant);

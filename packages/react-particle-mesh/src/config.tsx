@@ -85,36 +85,36 @@ export function withConfig(WrappedComponent: React.ComponentType<HydratedConfig>
     const config = withDefaults(overrides);
     const [size, setSize] = useState<{ width: number; height: number } | null>(null);
 
-    // rebuild on options change and window resize
+    // rebuild on structural option change and container resize; other options apply live
     useEffect(() => {
+      const container = containerRef.current;
+      if (!container) return;
+
       let timeout: ReturnType<typeof setTimeout> | undefined;
+      let measured: { width: number; height: number } | null = null;
       const rebuild = () => {
         setSize(null);
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-          if (containerRef.current) {
-            const { clientWidth: width, clientHeight: height } = containerRef.current;
-            setSize({ width, height });
-          }
+          measured = { width: container.clientWidth, height: container.clientHeight };
+          setSize(measured);
         }, 100);
       };
+
+      // ignore observer callbacks caused by our own remount unless the size really changed
+      const observer = new ResizeObserver(() => {
+        if (measured?.width !== container.clientWidth || measured?.height !== container.clientHeight) {
+          rebuild();
+        }
+      });
+
       rebuild();
-      window.addEventListener('resize', rebuild);
+      observer.observe(container);
       return () => {
-        window.removeEventListener('resize', rebuild);
+        observer.disconnect();
         clearTimeout(timeout);
       };
-    // particleColor excluded: an inline function would rebuild on every render
-    }, [
-      config.particleColumnCount,
-      config.particleSize,
-      config.mouseGravityStrength,
-      config.mouseGravityRadius,
-      config.anchorSpringConstant,
-      config.anchorDampingConstant,
-      config.backgroundColor,
-      config.debug,
-    ]);
+    }, [config.particleColumnCount, config.debug]);
 
     return (
       <div
