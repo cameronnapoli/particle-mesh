@@ -1,13 +1,41 @@
 {
   "name": "react-particle-mesh",
   "version": "0.1.0",
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
+  "description": "An interactive Three.js particle grid for React. Particles are held in place by damped springs and pulled toward the cursor.",
+  "keywords": ["react", "three", "threejs", "particles", "mesh", "animation", "webgl", "background"],
+  "license": "MIT",
+  "author": "Cameron Napoli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cameronnapoli/particle-mesh.git",
+    "directory": "packages/react-particle-mesh"
   },
+  "homepage": "https://github.com/cameronnapoli/particle-mesh#readme",
+  "bugs": "https://github.com/cameronnapoli/particle-mesh/issues",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": false,
   "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
     "lint": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepublishOnly": "bun run lint && bun run test && bun run build"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -18,6 +46,7 @@
     "@types/three": "^0.179.0",
     "react": "19.1.0",
     "three": "^0.179.1",
+    "tsup": "8.5.1",
     "typescript": "^5",
     "vitest": "^5.0.3"
   }

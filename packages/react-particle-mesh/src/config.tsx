@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { type ComponentType, type CSSProperties, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 /** Any CSS color string or hex number, e.g. `'#f0f0f0'` or `0xf0f0f0`. */
@@ -70,7 +70,7 @@ export function hydrateConfig(config: Config, width: number, height: number): Hy
 
 export type ParticleMeshProps = Partial<Config> & {
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 };
 
 function withDefaults(overrides: Partial<Config>): Config {
@@ -81,7 +81,7 @@ function withDefaults(overrides: Partial<Config>): Config {
   return config;
 }
 
-export function withConfig(WrappedComponent: React.ComponentType<HydratedConfig>) {
+export function withConfig(WrappedComponent: ComponentType<HydratedConfig>) {
   return function WithConfigComponent({ className, style, ...overrides }: ParticleMeshProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const config = withDefaults(overrides);
@@ -136,7 +136,7 @@ export function withConfig(WrappedComponent: React.ComponentType<HydratedConfig>
   };
 }
 
-const containerStyle: React.CSSProperties = {
+const containerStyle: CSSProperties = {
   width: '100%',
   height: '100%',
   overflow: 'hidden',

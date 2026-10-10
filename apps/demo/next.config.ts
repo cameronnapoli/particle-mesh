@@ -1,7 +1,5 @@
 import type { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {
-  transpilePackages: ['react-particle-mesh'],
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
