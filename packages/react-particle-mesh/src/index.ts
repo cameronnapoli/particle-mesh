@@ -1,2 +1,2 @@
-export * from './ParticleMesh';
-export { DEFAULT_CONFIG, type Config, type ParticleMeshProps } from './config';
+export { ParticleMesh } from './ParticleMesh';
+export { DEFAULT_CONFIG, type Color, type Config, type ParticleMeshProps } from './config';

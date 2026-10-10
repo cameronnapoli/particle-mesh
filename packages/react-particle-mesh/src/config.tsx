@@ -1,25 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
+/** Any CSS color string or hex number, e.g. `'#f0f0f0'` or `0xf0f0f0`. */
+export type Color = string | number;
+
 export interface Config {
   particleColumnCount: number;
+  particleSize: number;
   mouseGravityStrength: number;
   mouseGravityRadius: number | null;
   anchorSpringConstant: number;
   anchorDampingConstant: number;
-  backgroundColor: THREE.ColorRepresentation;
-  particleColor: (index: number) => THREE.ColorRepresentation;
+  backgroundColor: Color;
+  particleColor: (index: number) => Color;
   debug: boolean;
 }
 
 export const DEFAULT_CONFIG: Config = {
   particleColumnCount: 80,
+  particleSize: 5,
   mouseGravityStrength: 6,
   mouseGravityRadius: null,
   anchorSpringConstant: 0.1,
   anchorDampingConstant: 0.1,
   backgroundColor: '#f0f0f0',
-  particleColor: () => new THREE.Color(0, 0, Math.random()),
+  particleColor: () => new THREE.Color(0, 0, Math.random()).getHex(),
   debug: false,
 };
 
@@ -61,12 +66,23 @@ export function hydrateConfig(config: Config, width: number, height: number): Hy
   };
 }
 
-export type ParticleMeshProps = Partial<Config>;
+export type ParticleMeshProps = Partial<Config> & {
+  className?: string;
+  style?: React.CSSProperties;
+};
+
+function withDefaults(overrides: Partial<Config>): Config {
+  const config = { ...DEFAULT_CONFIG };
+  for (const [key, value] of Object.entries(overrides)) {
+    if (value !== undefined) Object.assign(config, { [key]: value });
+  }
+  return config;
+}
 
 export function withConfig(WrappedComponent: React.ComponentType<HydratedConfig>) {
-  return function WithConfigComponent(props: ParticleMeshProps) {
+  return function WithConfigComponent({ className, style, ...overrides }: ParticleMeshProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const config: Config = { ...DEFAULT_CONFIG, ...props };
+    const config = withDefaults(overrides);
     const [size, setSize] = useState<{ width: number; height: number } | null>(null);
 
     // rebuild on options change and window resize
@@ -91,6 +107,7 @@ export function withConfig(WrappedComponent: React.ComponentType<HydratedConfig>
     // particleColor excluded: an inline function would rebuild on every render
     }, [
       config.particleColumnCount,
+      config.particleSize,
       config.mouseGravityStrength,
       config.mouseGravityRadius,
       config.anchorSpringConstant,
@@ -102,7 +119,12 @@ export function withConfig(WrappedComponent: React.ComponentType<HydratedConfig>
     return (
       <div
         ref={containerRef}
-        style={{...containerStyle, backgroundColor: config.backgroundColor.toString()}}
+        className={className}
+        style={{
+          ...containerStyle,
+          backgroundColor: `#${new THREE.Color(config.backgroundColor).getHexString()}`,
+          ...style,
+        }}
       >
         {size ? (
           <WrappedComponent {...hydrateConfig(config, size.width, size.height)} />

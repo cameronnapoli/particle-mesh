@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { HydratedConfig, withConfig } from './config';
 import { gravity, elasticity } from './forces';
 
-export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) => {
+const ParticleMeshCanvas: React.FunctionComponent<HydratedConfig> = (config) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
 
@@ -66,7 +66,7 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
     particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const particleMaterial: THREE.PointsMaterial = new THREE.PointsMaterial({
-      size: 5.0,
+      size: config.particleSize,
       vertexColors: true,
     });
 
@@ -177,4 +177,4 @@ export const ParticleMesh: React.FunctionComponent<HydratedConfig> = (config) =>
   );
 };
 
-export const ParticleMeshWithConfig = withConfig(ParticleMesh);
+export const ParticleMesh = withConfig(ParticleMeshCanvas);

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { DEFAULT_CONFIG, ParticleMeshProps, ParticleMeshWithConfig } from 'react-particle-mesh';
+import { DEFAULT_CONFIG, ParticleMeshProps, ParticleMesh } from 'react-particle-mesh';
 
 import Controls from '@/components/Controls/Controls';
 import styles from './page.module.scss';
@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.stage}>
-        <ParticleMeshWithConfig {...config} />
+        <ParticleMesh {...config} />
         <Controls
           defaultColumns={DEFAULT_CONFIG.particleColumnCount}
           defaultMouseGravityRadius={DEFAULT_CONFIG.mouseGravityRadius}
